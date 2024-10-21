@@ -21,12 +21,5 @@ public interface IReading {
     double getMeterCount();
     String getMeterId();
     boolean getSubstitute();
-
-    default String printDateOfReading() {
-        // Get the date of reading
-        LocalDate date = getDateOfReading();
-        // Format the date in a readable format (e.g. "dd-MM-yyyy")
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        return date != null ? date.format(formatter) : "No date available";
-    }
+    String printDateOfReading();
 }
