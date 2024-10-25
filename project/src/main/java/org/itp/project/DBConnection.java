@@ -75,7 +75,19 @@ public class DBConnection implements IDatabaseConnection{
 
 	@Override
 	public void closeConnection() {
-		 
+		if (conn != null) {
+	        try {
+	            conn.close();
+	            System.out.println("Database connection closed successfully.");
+	        } catch (SQLException e) {
+	            System.err.println("Error closing the database connection: " + e.getMessage());
+	            e.printStackTrace();
+	        } finally {
+	            conn = null; // Setzt die Verbindung auf null, um doppelte Schließungen zu vermeiden
+	        }
+	    } else {
+	        System.out.println("No open database connection to close.");
+	    }
 		
 	}
 

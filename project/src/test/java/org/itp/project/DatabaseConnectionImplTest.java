@@ -48,8 +48,8 @@ public class DatabaseConnectionImplTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
         // Schließe die Verbindung nach dem Test
-        if (dbConnection.getConnection() != null && !dbConnection.getConnection().isClosed()) {
-            dbConnection.getConnection().close();
+        if (dbConnection != null) {
+            dbConnection.closeConnection();
         }
     }
 }
