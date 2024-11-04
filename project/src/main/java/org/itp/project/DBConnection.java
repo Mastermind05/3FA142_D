@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 import org.itp.interfaces.IDatabaseConnection;
@@ -63,8 +64,19 @@ public class DBConnection implements IDatabaseConnection{
 
 	@Override
 	public void truncateAllTables() {
-		// TODO Auto-generated method stub
-		
+		Statement statement = null;
+		try {
+            statement = conn.createStatement();
+            
+            // SQL TRUNCATE-Befehle für die Tabellen Customer und Reading
+            statement.executeUpdate("TRUNCATE TABLE Customer");
+            statement.executeUpdate("TRUNCATE TABLE Reading");
+
+            System.out.println("Die Tabellen Customer und Reading wurden erfolgreich geleert.");
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 	}
 
 	@Override
