@@ -1,0 +1,5 @@
+Bevor du die Powershel scripte ausführen kannst musst du es als Administrator ausführen und
+
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+eingeben.
