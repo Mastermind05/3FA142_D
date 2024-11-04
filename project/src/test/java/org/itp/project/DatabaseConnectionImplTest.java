@@ -23,6 +23,7 @@ public class DatabaseConnectionImplTest extends TestCase {
 
         // Simuliere den Systembenutzer
         System.setProperty("user.name", "testuser");
+        dbConnection.openConnection(properties);
     }
 
     public void testOpenConnection() {
@@ -41,6 +42,20 @@ public class DatabaseConnectionImplTest extends TestCase {
             System.out.println("Verbindung erfolgreich hergestellt.");
         } catch (SQLException e) {
             fail("Datenbankverbindung fehlgeschlagen: " + e.getMessage());
+        }
+    }
+    public void testTruncateAllTables() {
+        try {
+            // Initiale Verbindung prüfen
+            Connection conn = dbConnection.getConnection();
+            assertNotNull("Connection should be established", conn);
+   
+            // Die truncateAllTables Methode aufrufen
+            dbConnection.truncateAllTables();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Exception occurred during truncateAllTables test: " + e.getMessage());
         }
     }
 
