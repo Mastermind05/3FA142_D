@@ -17,13 +17,13 @@ public class DatabaseConnectionImplTest extends TestCase {
         properties = new Properties();
 
         // Simuliere das Laden einer Test-Properties-Datei (hardcodierte Werte)
-        properties.setProperty("testuser.db.url", "jdbc:mariadb://localhost:3306/mydatabase");
-        properties.setProperty("testuser.db.user", "user");
-        properties.setProperty("testuser.db.pw", "password");
+        properties.setProperty("testuser.db.url", "jdbc:mariadb://localhost:3306/test");
+        properties.setProperty("testuser.db.user", "test");
+        properties.setProperty("testuser.db.pw", "tester1");
 
         // Simuliere den Systembenutzer
         System.setProperty("user.name", "testuser");
-        dbConnection.openConnection(properties);
+        
     }
 
     public void testOpenConnection() {
@@ -46,7 +46,8 @@ public class DatabaseConnectionImplTest extends TestCase {
     }
     public void testTruncateAllTables() {
         try {
-            // Initiale Verbindung prüfen
+        	
+        	dbConnection.openConnection(properties);
             Connection conn = dbConnection.getConnection();
             assertNotNull("Connection should be established", conn);
    
@@ -58,11 +59,10 @@ public class DatabaseConnectionImplTest extends TestCase {
             fail("Exception occurred during truncateAllTables test: " + e.getMessage());
         }
     }
-
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        // Schließe die Verbindung nach dem Test
+        // Schließe die Verbindung nach jedem Test
         if (dbConnection != null) {
             dbConnection.closeConnection();
         }
