@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -81,7 +82,37 @@ public class DBConnection implements IDatabaseConnection{
 
 	@Override
 	public void removeAllTables() {
-		// TODO Auto-generated method stub
+	    Statement statement = null;
+	    try {
+	        if (conn == null || conn.isClosed()) {
+	            System.out.println("Connection is not open. Cannot remove tables.");
+	            return;
+	        }
+	        
+	        DatabaseMetaData metaData = conn.getMetaData();
+	        statement = conn.createStatement();
+
+	        // Alle Tabellen in der Datenbank abrufen
+	        try (ResultSet tables = metaData.getTables(null, null, "%", new String[] {"TABLE"})) {
+	            while (tables.next()) {
+	                String tableName = tables.getString("TABLE_NAME");
+	                
+	                // SQL DROP TABLE-Befehl für jede Tabelle
+	                statement.executeUpdate("DROP TABLE " + tableName);
+	                System.out.println("Tabelle " + tableName + " wurde erfolgreich gelöscht.");
+	            }
+	        }
+	        
+	    } catch (SQLException e) {
+	        System.err.println("Fehler beim Löschen der Tabellen: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (statement != null) statement.close();
+	        } catch (SQLException ex) {
+	            ex.printStackTrace();
+	        }
+	    }
 		
 	}
 
