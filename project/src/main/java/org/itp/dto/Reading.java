@@ -1,4 +1,4 @@
-package interfaceimpl;
+package org.itp.dto;
 
 import java.time.LocalDate;
 
