@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import org.itp.enums.Gender;
 
-public interface ICustomer {
+public interface ICustomer extends IID{
     void setFirstName(String firstName);
     void setLastName(String lastName);
     void setBirthDate(LocalDate birthDate);

@@ -1,6 +1,7 @@
-package interfaceimpl;
+package org.itp.dto;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import org.itp.enums.KindOfMeter;
 import org.itp.interfaces.ICustomer;
@@ -8,6 +9,7 @@ import org.itp.interfaces.IReading;
 
 public class Reading implements IReading{
 	
+	private UUID id;
 	private String comment;
     private ICustomer customer;
     private LocalDate dateOfReading;
@@ -89,6 +91,18 @@ public class Reading implements IReading{
 	@Override
 	public String printDateOfReading() {
 		 return dateOfReading != null ? dateOfReading.toString() : "Kein Datum Verfügbar";
+	}
+
+	@Override
+	public UUID getId() {
+		// TODO Auto-generated method stub
+		return id;
+	}
+
+	@Override
+	public void setId(UUID id) {
+		this.id = id;
+		
 	}
 
 }

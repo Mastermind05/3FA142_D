@@ -1,16 +1,33 @@
-package interfaceimpl;
+package org.itp.dto;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import org.itp.enums.Gender;
 import org.itp.interfaces.ICustomer;
 
 public class Customer implements ICustomer{
 
+	private UUID id;
 	private String firstName;
     private String lastName;
     private LocalDate birthDate;
     private Gender gender;
+    
+    public Customer(UUID id, String firstName, String lastName, Gender gender, LocalDate birthDate) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.birthDate = birthDate;
+    }
+    public Customer(String firstName, String lastName, Gender gender, LocalDate birthDate) {
+        this.id = UUID.randomUUID();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.birthDate = birthDate;
+    }
 	
 	@Override
 	public void setFirstName(String firstName) {
@@ -58,6 +75,16 @@ public class Customer implements ICustomer{
 	public Gender getGender() {
 		// TODO Auto-generated method stub
 		return gender;
+	}
+
+	@Override
+	public UUID getId() {
+		return id;
+	}
+	@Override
+	public void setId(UUID id) {
+		this.id = id;
+		
 	}
 
 }
