@@ -36,7 +36,7 @@ public class SQLStatement {
 
         int rowsAffected = stmt.executeUpdate();
         if (rowsAffected == 0) {
-            throw new SQLException("Customer creation failed");
+            throw new SQLException("Das Erstellen des Kunden ist fehlgeschlagen");
         }
 
         stmt.close();
