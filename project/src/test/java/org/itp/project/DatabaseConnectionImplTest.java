@@ -1,57 +1,58 @@
 package org.itp.project;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class DatabaseConnectionImplTest extends TestCase {
-	private DBConnection dbConnection;
+public class DatabaseConnectionImplTest {
+
+    private DBConnection dbConnection;
     private Properties properties;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeEach
+    public void setUp() {
         dbConnection = new DBConnection();
         properties = new Properties();
 
-        // Simuliere das Laden einer Test-Properties-Datei (hardcodierte Werte)
+        // Simulate loading a test properties file (hardcoded values)
         properties.setProperty("testuser.db.url", "jdbc:mariadb://localhost:3306/test");
         properties.setProperty("testuser.db.user", "test");
         properties.setProperty("testuser.db.pw", "tester1");
 
-        // Simuliere den Systembenutzer
+        // Simulate the system user
         System.setProperty("user.name", "testuser");
-        
     }
 
+    @Test
     public void testOpenConnection() {
         try {
-        	
-            // Versuche, eine Verbindung zu öffnen
+            // Attempt to open a connection
             dbConnection.openConnection(properties);
 
-            // Hole die Verbindung und prüfe, ob sie nicht null ist
+            // Retrieve the connection and verify it's not null
             Connection conn = dbConnection.getConnection();
-            assertNotNull("Die Verbindung sollte nicht null sein", conn);
+            assertNotNull(conn, "The connection should not be null");
 
-            // Überprüfe, ob die Verbindung gültig ist
-            assertFalse("Die Verbindung sollte nicht geschlossen sein", conn.isClosed());
+            // Verify that the connection is valid
+            assertFalse(conn.isClosed(), "The connection should not be closed");
 
-            System.out.println("Verbindung erfolgreich hergestellt.");
+            System.out.println("Connection established successfully.");
         } catch (SQLException e) {
-            fail("Datenbankverbindung fehlgeschlagen: " + e.getMessage());
+            fail("Database connection failed: " + e.getMessage());
         }
     }
+
+    @Test
     public void testTruncateAllTables() {
         try {
-        	
-        	dbConnection.openConnection(properties);
+            dbConnection.openConnection(properties);
             Connection conn = dbConnection.getConnection();
-            assertNotNull("Connection should be established", conn);
-   
-            // Die truncateAllTables Methode aufrufen
+            assertNotNull(conn, "Connection should be established");
+
+            // Call the truncateAllTables method
             dbConnection.truncateAllTables();
 
         } catch (Exception e) {
@@ -59,10 +60,10 @@ public class DatabaseConnectionImplTest extends TestCase {
             fail("Exception occurred during truncateAllTables test: " + e.getMessage());
         }
     }
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        // Schließe die Verbindung nach jedem Test
+
+    @AfterEach
+    public void tearDown() {
+        // Close the connection after each test
         if (dbConnection != null) {
             dbConnection.closeConnection();
         }
