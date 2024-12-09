@@ -15,6 +15,8 @@ public class SQLStatement {
 
 	//Customer Part
 	
+	// ToDo Select by Name
+	
 	public Customer getCustomer(UUID id) throws SQLException {
         String query = "SELECT * FROM "+Tables.CUSTOMERS+" WHERE id = ?;";
         PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query);
@@ -67,5 +69,5 @@ public class SQLStatement {
 
         return rowsAffected;
     }
-    //Reading Part
+    //Reading Part wird bis 11.12.2024 umgesetz 
 }
