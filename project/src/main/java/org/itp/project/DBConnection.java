@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import org.itp.enums.Gender;
+import org.itp.enums.KindOfMeter;
+import org.itp.enums.Tables;
 import org.itp.interfaces.IDatabaseConnection;
 
 public class DBConnection implements IDatabaseConnection{
@@ -61,17 +63,55 @@ public class DBConnection implements IDatabaseConnection{
 
 	@Override
 	public void createAllTables() {
-		StringBuilder genderEnums = new StringBuilder();
-        String[] genderNames = Arrays.stream(Gender.values()).map(Gender::toString).toArray(String[]::new);
-        for (int i = 0; i < genderNames.length; i++) {
-            String genderName = genderNames[i];
-            genderEnums.append("'").append(genderName).append("'");
-            if (i < genderNames.length - 1) {
-                genderEnums.append(", ");
-            }
-         }
-	}
+		        StringBuilder genderEnums = new StringBuilder();
+		        String[] genderNames = Arrays.stream(Gender.values()).map(Gender::toString).toArray(String[]::new);
+		        for (int i = 0; i < genderNames.length; i++) {
+		            String genderName = genderNames[i];
+		            genderEnums.append("'").append(genderName).append("'");
+		            if (i < genderNames.length - 1) {
+		                genderEnums.append(", ");
+		            }
+		        }
 
+		        String createCustomersTable = "CREATE TABLE IF NOT EXISTS "+ Tables.CUSTOMERS+" (" +
+		                "id BINARY(16) PRIMARY KEY, " +
+		                "firstName VARCHAR(255) NOT NULL, " +
+		                "lastName VARCHAR(255) NOT NULL, " +
+		                "birthDate DATE, " +
+		                "gender ENUM("+genderEnums+")" +
+		                ");";
+
+		        StringBuilder kindOfMeterEnums = new StringBuilder();
+		        String[] kindOfMeterNames = Arrays.stream(KindOfMeter.values()).map(KindOfMeter::toString).toArray(String[]::new);
+		        for (int i = 0; i < kindOfMeterNames.length; i++) {
+		            String kindOfMeterName = kindOfMeterNames[i];
+		            kindOfMeterEnums.append("'").append(kindOfMeterName).append("'");
+		            if (i < kindOfMeterNames.length - 1) {
+		                kindOfMeterEnums.append(", ");
+		            }
+		        }
+
+		        String createReadingTable = "CREATE TABLE IF NOT EXISTS "+Tables.READING+" (" +
+		                "id BINARY(16) PRIMARY KEY, " +
+		                "comment TEXT, " +
+		                "dateOfReading DATE NOT NULL, " +
+		                "kindOfMeter ENUM("+kindOfMeterEnums+")," +
+		                "meterCount DOUBLE NOT NULL, " +
+		                "meterId VARCHAR(255), " +
+		                "substitute BOOLEAN, " +
+		                "customer_id BINARY(16), " +
+		                "CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES "+Tables.CUSTOMERS+"(id) ON DELETE SET NULL" +
+		                ");";
+
+		        try (Statement stmt = conn.createStatement()) {
+		            stmt.execute(createCustomersTable);
+		            stmt.execute(createReadingTable);
+		            System.out.println("Tabellen erfolgreich erstellt.");
+		        } catch (SQLException e) {
+		            System.err.println("Fehler beim Erstellen der Tabellen: " + e.getMessage());
+		        }
+		    }
+	
 	@Override
 	public void truncateAllTables() {
 		Statement statement = null;
