@@ -8,8 +8,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Properties;
 
+import org.itp.enums.Gender;
 import org.itp.interfaces.IDatabaseConnection;
 
 public class DBConnection implements IDatabaseConnection{
@@ -59,8 +61,15 @@ public class DBConnection implements IDatabaseConnection{
 
 	@Override
 	public void createAllTables() {
-		// TODO Auto-generated method stub
-		
+		StringBuilder genderEnums = new StringBuilder();
+        String[] genderNames = Arrays.stream(Gender.values()).map(Gender::toString).toArray(String[]::new);
+        for (int i = 0; i < genderNames.length; i++) {
+            String genderName = genderNames[i];
+            genderEnums.append("'").append(genderName).append("'");
+            if (i < genderNames.length - 1) {
+                genderEnums.append(", ");
+            }
+         }
 	}
 
 	@Override
