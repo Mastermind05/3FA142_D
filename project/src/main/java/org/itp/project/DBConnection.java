@@ -106,7 +106,7 @@ public class DBConnection implements IDatabaseConnection{
 		        try (Statement stmt = conn.createStatement()) {
 		            stmt.execute(createCustomersTable);
 		            stmt.execute(createReadingTable);
-		            System.out.println("Tabellen erfolgreich erstellt.");
+		            System.out.println("Die Tabellen wurden erfolgreich erstellt.");
 		        } catch (SQLException e) {
 		            System.err.println("Fehler beim Erstellen der Tabellen: " + e.getMessage());
 		        }
@@ -114,20 +114,17 @@ public class DBConnection implements IDatabaseConnection{
 	
 	@Override
 	public void truncateAllTables() {
-		Statement statement = null;
-		try {
-            statement = conn.createStatement();
-            
-            // SQL TRUNCATE-Befehle für die Tabellen Customer und Reading
-            statement.executeUpdate("TRUNCATE TABLE Customer");
-            statement.executeUpdate("TRUNCATE TABLE Reading");
+	    try (Statement statement = conn.createStatement()) {
+	        statement.executeUpdate("TRUNCATE TABLE Customer");
+	        statement.executeUpdate("TRUNCATE TABLE Reading");
 
-            System.out.println("Die Tabellen Customer und Reading wurden erfolgreich geleert.");
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+	        System.out.println("Die Tabellen Customer und Reading wurden erfolgreich geleert.");
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        throw new RuntimeException("Error while truncating tables: " + e.getMessage(), e);
+	    }
 	}
+	
 
 	@Override
 	public void removeAllTables() {

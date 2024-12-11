@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.itp.dto.Customer;
+import org.itp.dto.Reading;
 import org.itp.enums.Gender;
 import org.itp.utils.UUIDUtils;
 
@@ -20,4 +21,11 @@ public class ObjectMapper {
                 rs.getDate("birthDate").toLocalDate()
         );
     }
+	/*public static Reading getReading(ResultSet rs) throws SQLException {
+		if (!rs.next()) {
+			return null;
+		} 
+		
+				
+	}*/
 }

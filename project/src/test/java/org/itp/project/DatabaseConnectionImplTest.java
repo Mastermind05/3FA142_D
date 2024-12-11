@@ -19,8 +19,8 @@ public class DatabaseConnectionImplTest {
 
         // Simulate loading a test properties file (hardcoded values)
         properties.setProperty("testuser.db.url", "jdbc:mariadb://localhost:3306/test");
-        properties.setProperty("testuser.db.user", "test");
-        properties.setProperty("testuser.db.pw", "tester1");
+        properties.setProperty("testuser.db.user", "root");
+        properties.setProperty("testuser.db.pw", "password");
 
         // Simulate the system user
         System.setProperty("user.name", "testuser");

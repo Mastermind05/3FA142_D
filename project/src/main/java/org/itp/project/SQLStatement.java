@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.itp.dto.Customer;
@@ -28,8 +29,8 @@ public class SQLStatement {
 	
 
     public void createCustomer(Customer customer) throws SQLException {
-        String mutation = "INSERT INTO "+Tables.CUSTOMERS+" (id, firstName, lastName, birthDate, gender) VALUES (?,?,?,?,?);";
-        PreparedStatement stmt = dbConnection.getConnection().prepareStatement(mutation);
+        String query = "INSERT INTO "+Tables.CUSTOMERS+" (id, firstName, lastName, birthDate, gender) VALUES (?,?,?,?,?);";
+        PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query);
         stmt.setBytes(1, UUIDUtils.UUIDAsBytes(customer.getId()));
         stmt.setString(2, customer.getFirstName());
         stmt.setString(3, customer.getLastName());
@@ -45,8 +46,8 @@ public class SQLStatement {
     }
 
     public int updateCustomer(Customer customer) throws SQLException {
-        String mutation = "UPDATE "+Tables.CUSTOMERS+" SET firstName = ?, lastName = ?, birthDate = ?, gender = ? WHERE id = ?;";
-        PreparedStatement stmt = dbConnection.getConnection().prepareStatement(mutation);
+        String query = "UPDATE "+Tables.CUSTOMERS+" SET firstName = ?, lastName = ?, birthDate = ?, gender = ? WHERE id = ?;";
+        PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query);
         stmt.setString(1, customer.getFirstName());
         stmt.setString(2, customer.getLastName());
         stmt.setDate(3, Date.valueOf(customer.getBirthDate()));
@@ -60,8 +61,8 @@ public class SQLStatement {
     }
 
     public int deleteCustomer(UUID customerId) throws SQLException {
-        String mutation = "DELETE FROM "+Tables.CUSTOMERS+" WHERE id = ?;";
-        PreparedStatement stmt = dbConnection.getConnection().prepareStatement(mutation);
+        String query = "DELETE FROM "+Tables.CUSTOMERS+" WHERE id = ?;";
+        PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query);
         stmt.setBytes(1, UUIDUtils.UUIDAsBytes(customerId));
 
         int rowsAffected = stmt.executeUpdate();
@@ -69,5 +70,63 @@ public class SQLStatement {
 
         return rowsAffected;
     }
-    //Reading Part wird bis 11.12.2024 umgesetz 
+    
+    public void createReading(UUID id, String comment, LocalDate dateOfReading, String kindOfMeter, double meterCount, String meterId, boolean substitute, UUID customerId) {
+    	 String query = "INSERT INTO " + Tables.READING + " (id, comment, dateOfReading, kindOfMeter, meterCount, meterId, substitute, customer_id) " +
+    	                   "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    	 try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query)) {
+    	      stmt.setBytes(1, UUIDUtils.UUIDAsBytes(id));
+    	        stmt.setString(2, comment);
+    	        stmt.setDate(3, java.sql.Date.valueOf(dateOfReading));
+    	        stmt.setString(4, kindOfMeter);
+    	        stmt.setDouble(5, meterCount);
+    	        stmt.setString(6, meterId);
+    	        stmt.setBoolean(7, substitute);
+    	        stmt.setBytes(8, UUIDUtils.UUIDAsBytes(customerId));
+
+    	        stmt.executeUpdate();
+    	    } catch (SQLException e) {
+    	        e.printStackTrace();
+    	    }
+    	}
+
+ /*   
+    public void getReading(UUID id) throws SQLException {
+        String query = "SELECT * FROM " + Tables.READING + "WHERE ID = ?;";
+        PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query);
+        stmt.setBytes(1, UUIDUtils.UUIDAsBytes(id));
+        ResultSet rs = stmt.executeQuery();
+        stmt.close();
+        return ObjectMapper.getReading(rs);
+    } */
+
+    
+public void updateReading(UUID id, String comment, LocalDate dateOfReading, String kindOfMeter, double meterCount, String meterId, boolean substitute, UUID customerId) {
+        String query = "UPDATE " + Tables.READING + " SET comment = ?, dateOfReading = ?, kindOfMeter = ?, meterCount = ?, meterId = ?, substitute = ?, customer_id = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query)) {
+            stmt.setString(1, comment);
+            stmt.setDate(2, java.sql.Date.valueOf(dateOfReading));
+            stmt.setString(3, kindOfMeter);
+            stmt.setDouble(4, meterCount);
+            stmt.setString(5, meterId);
+            stmt.setBoolean(6, substitute);
+            stmt.setBytes(7, UUIDUtils.UUIDAsBytes(customerId));
+            stmt.setBytes(8, UUIDUtils.UUIDAsBytes(id));
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void deleteReading(UUID readingid) {
+        String query = "DELETE FROM " + Tables.READING + " WHERE id = ?";
+        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query)) {
+            stmt.setBytes(1, UUIDUtils.UUIDAsBytes(readingid));
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
