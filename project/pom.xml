@@ -9,10 +9,9 @@
 	<artifactId>project</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>project</name>
-	<description>A simple project.</description>
-	<!-- FIXME change it to the project's website -->
-	<url>http://www.example.com</url>
+  <name>3FA142_D</name>
+  <description>AP Projekt</description>
+
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
