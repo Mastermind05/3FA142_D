@@ -3,7 +3,7 @@ package org.itp.enums;
 public enum Tables {
 
 	    CUSTOMERS("customers"),
-	    READING("reading");
+	    READINGS("reading");
 
 	    private final String name;
 	    Tables(String name) {

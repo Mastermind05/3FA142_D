@@ -5,11 +5,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.itp.dto.Customer;
+import org.itp.dto.Reading;
 import org.itp.enums.Tables;
 import org.itp.utils.UUIDUtils;
+
+import jakarta.annotation.Nullable;
 
 public class SQLStatement {
 	private DBConnection dbConnection;
@@ -72,7 +76,7 @@ public class SQLStatement {
     }
     
     public void createReading(UUID id, String comment, LocalDate dateOfReading, String kindOfMeter, double meterCount, String meterId, boolean substitute, UUID customerId) {
-    	 String query = "INSERT INTO " + Tables.READING + " (id, comment, dateOfReading, kindOfMeter, meterCount, meterId, substitute, customer_id) " +
+    	 String query = "INSERT INTO " + Tables.READINGS + " (id, comment, dateOfReading, kindOfMeter, meterCount, meterId, substitute, customer_id) " +
     	                   "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     	 try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query)) {
@@ -91,19 +95,28 @@ public class SQLStatement {
     	    }
     	}
 
- /*   
-    public void getReading(UUID id) throws SQLException {
-        String query = "SELECT * FROM " + Tables.READING + "WHERE ID = ?;";
+    @Nullable
+    public Reading getReading(UUID id) throws SQLException {
+        String query = "SELECT * FROM "+Tables.READINGS+" WHERE id = ?;";
         PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query);
         stmt.setBytes(1, UUIDUtils.UUIDAsBytes(id));
         ResultSet rs = stmt.executeQuery();
         stmt.close();
-        return ObjectMapper.getReading(rs);
-    } */
+        return ObjectMapper.getReading(rs, this);
+    }
+
+    public List<Reading> getReadingsByCustomerId(UUID customerId) throws SQLException {
+        String query = "SELECT * FROM "+Tables.READINGS+" WHERE customer_id = ?;";
+        PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query);
+        stmt.setBytes(1, UUIDUtils.UUIDAsBytes(customerId));
+        ResultSet rs = stmt.executeQuery();
+        stmt.close();
+        return ObjectMapper.getReadings(rs, this);
+    }
 
     
 public void updateReading(UUID id, String comment, LocalDate dateOfReading, String kindOfMeter, double meterCount, String meterId, boolean substitute, UUID customerId) {
-        String query = "UPDATE " + Tables.READING + " SET comment = ?, dateOfReading = ?, kindOfMeter = ?, meterCount = ?, meterId = ?, substitute = ?, customer_id = ? WHERE id = ?";
+        String query = "UPDATE " + Tables.READINGS + " SET comment = ?, dateOfReading = ?, kindOfMeter = ?, meterCount = ?, meterId = ?, substitute = ?, customer_id = ? WHERE id = ?";
 
         try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query)) {
             stmt.setString(1, comment);
@@ -121,7 +134,7 @@ public void updateReading(UUID id, String comment, LocalDate dateOfReading, Stri
         }
     }
     public void deleteReading(UUID readingid) {
-        String query = "DELETE FROM " + Tables.READING + " WHERE id = ?";
+        String query = "DELETE FROM " + Tables.READINGS + " WHERE id = ?";
         try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query)) {
             stmt.setBytes(1, UUIDUtils.UUIDAsBytes(readingid));
             stmt.executeUpdate();

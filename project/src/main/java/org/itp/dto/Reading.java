@@ -18,7 +18,18 @@ public class Reading implements IReading{
     private String meterId;
     private boolean substitute;
 
-	@Override
+    public Reading(UUID uuid, KindOfMeter kindOfMeter, LocalDate dateOfReading, Customer customer, String comment, double meterCount, String meterId, Boolean substitute) {
+        this.id = UUID.randomUUID();
+        this.kindOfMeter = kindOfMeter;
+        this.dateOfReading = dateOfReading;
+        this.customer = customer;
+        this.comment = comment;
+        this.meterCount = meterCount;
+        this.meterId = meterId;
+        this.substitute = substitute;
+    }
+    
+    @Override
 	public void setComment(String comment) {
 		this.comment = comment;
 	}

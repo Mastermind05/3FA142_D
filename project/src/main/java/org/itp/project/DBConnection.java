@@ -91,7 +91,7 @@ public class DBConnection implements IDatabaseConnection{
 		            }
 		        }
 
-		        String createReadingTable = "CREATE TABLE IF NOT EXISTS "+Tables.READING+" (" +
+		        String createReadingTable = "CREATE TABLE IF NOT EXISTS "+Tables.READINGS+" (" +
 		                "id BINARY(16) PRIMARY KEY, " +
 		                "comment TEXT, " +
 		                "dateOfReading DATE NOT NULL, " +
@@ -118,7 +118,7 @@ public class DBConnection implements IDatabaseConnection{
 	    	statement.executeUpdate("SET foreign_key_checks = 0");
 	        statement.executeUpdate("TRUNCATE TABLE customers");
 	        statement.executeUpdate("TRUNCATE TABLE reading");
-	        statement.executeUpdate("SET foreign_key_checks = 1ö");
+	        statement.executeUpdate("SET foreign_key_checks = 1");
 
 	        System.out.println("Die Tabellen Customer und Reading wurden erfolgreich geleert.");
 	    } catch (SQLException e) {
