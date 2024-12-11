@@ -21,6 +21,8 @@
 		<jersey.version>3.1.9</jersey.version>
 		<jackson.version>2.18.0</jackson.version>
 	</properties>
+	
+	<packaging>war</packaging>
 
 	<dependencies>
 		<!-- JUnit 5 Dependency -->
@@ -108,6 +110,11 @@
 				<plugin>
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>3.1.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>3.3.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
