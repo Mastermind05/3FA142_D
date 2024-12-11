@@ -115,8 +115,10 @@ public class DBConnection implements IDatabaseConnection{
 	@Override
 	public void truncateAllTables() {
 	    try (Statement statement = conn.createStatement()) {
-	        statement.executeUpdate("TRUNCATE TABLE Customer");
-	        statement.executeUpdate("TRUNCATE TABLE Reading");
+	    	statement.executeUpdate("SET foreign_key_checks = 0");
+	        statement.executeUpdate("TRUNCATE TABLE customers");
+	        statement.executeUpdate("TRUNCATE TABLE reading");
+	        statement.executeUpdate("SET foreign_key_checks = 1ö");
 
 	        System.out.println("Die Tabellen Customer und Reading wurden erfolgreich geleert.");
 	    } catch (SQLException e) {
