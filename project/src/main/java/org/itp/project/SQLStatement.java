@@ -16,7 +16,11 @@ import org.itp.utils.UUIDUtils;
 import jakarta.annotation.Nullable;
 
 public class SQLStatement {
-	private DBConnection dbConnection;
+	private DBConnection dbConnection = new DBConnection();
+	
+	public SQLStatement(DBConnection dbConnection) {
+        this.dbConnection = dbConnection;
+    }
 
 	//Customer Part
 	

@@ -6,6 +6,9 @@ import java.util.UUID;
 import org.itp.enums.Gender;
 import org.itp.interfaces.ICustomer;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Customer implements ICustomer{
 
 	private UUID id;
@@ -27,6 +30,20 @@ public class Customer implements ICustomer{
         this.lastName = lastName;
         this.gender = gender;
         this.birthDate = birthDate;
+    }
+    @JsonCreator
+    public Customer(
+        @JsonProperty("id") UUID id,
+        @JsonProperty("firstName") String firstName,
+        @JsonProperty("lastName") String lastName,
+        @JsonProperty("birthDate") LocalDate birthDate,
+        @JsonProperty("gender") Gender gender
+    ) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.gender = gender;
     }
 	
 	@Override
