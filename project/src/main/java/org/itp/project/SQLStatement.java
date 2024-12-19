@@ -5,11 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import org.itp.dto.Customer;
 import org.itp.dto.Reading;
+import org.itp.enums.KindOfMeter;
 import org.itp.enums.Tables;
 import org.itp.utils.UUIDUtils;
 
@@ -153,4 +155,38 @@ public void updateReading(Reading reading) {
             e.printStackTrace();
         }
     }
+    
+    public List<Reading> getReadings(UUID customerId, LocalDate startDate, LocalDate endDate, KindOfMeter kindOfMeter) throws SQLException {
+        StringBuilder query = new StringBuilder("SELECT * FROM " + Tables.READINGS + " WHERE customer_id = ?");
+        
+        if (startDate != null) {
+            query.append(" AND dateOfReading >= ?");
+        }
+        if (endDate != null) {
+            query.append(" AND dateOfReading <= ?");
+        }
+        if (kindOfMeter != null) {
+            query.append(" AND kindOfMeter = ?");
+        }
+
+        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query.toString())) {
+            int paramIndex = 1;
+            stmt.setBytes(paramIndex++, UUIDUtils.UUIDAsBytes(customerId));
+
+            if (startDate != null) {
+                stmt.setDate(paramIndex++, Date.valueOf(startDate));
+            }
+            if (endDate != null) {
+                stmt.setDate(paramIndex++, Date.valueOf(endDate));
+            }
+            if (kindOfMeter != null) {
+                stmt.setString(paramIndex++, kindOfMeter.toString());
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            return ObjectMapper.getReadings(rs, this);
+        }
+    }
+
+
 }
