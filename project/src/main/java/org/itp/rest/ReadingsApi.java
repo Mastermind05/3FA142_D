@@ -4,9 +4,13 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 import org.itp.dto.Reading;
+import org.itp.enums.KindOfMeter;
 import org.itp.project.DBConnection;
 import org.itp.project.SQLStatement;
 import org.itp.utils.UUIDUtils;
@@ -78,6 +82,55 @@ public class ReadingsApi {
             return Response.ok("Reading deleted successfully").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+    
+ // GET /readings?customer={uuid}&start={datum}&end={datum}&kindOfMeter={kindOfMeter}
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getReadings(
+            @QueryParam("customer") String customerId,
+            @QueryParam("start") String startDateStr,
+            @QueryParam("end") String endDateStr,
+            @QueryParam("kindOfMeter") String kindOfMeterStr) {
+        
+        try {
+            // Validierung des customerId-Parameters
+            if (customerId == null || customerId.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Parameter 'customer' ist erforderlich.")
+                        .build();
+            }
+
+            UUID customerUUID = UUID.fromString(customerId);
+
+            // Konvertierung der Datumsparameter
+            LocalDate startDate = (startDateStr != null && !startDateStr.isEmpty()) 
+                    ? LocalDate.parse(startDateStr) : null;
+            LocalDate endDate = (endDateStr != null && !endDateStr.isEmpty()) 
+                    ? LocalDate.parse(endDateStr) : null;
+
+            // Konvertierung des kindOfMeter-Parameters
+            KindOfMeter kindOfMeter = (kindOfMeterStr != null && !kindOfMeterStr.isEmpty()) 
+                    ? KindOfMeter.valueOf(kindOfMeterStr.toUpperCase()) : null;
+
+            // Abrufen der Ablesungen aus der Datenbank
+            List<Reading> readings = sqlStatement.getReadings(customerUUID, startDate, endDate, kindOfMeter);
+
+            if (readings.isEmpty()) {
+                return Response.ok("[]").build();
+            }
+
+            return Response.ok(readings).build();
+
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Ungültiges Format für UUID oder andere Parameter.")
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .build();
         }
     }
 }
