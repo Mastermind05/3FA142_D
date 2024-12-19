@@ -17,4 +17,7 @@ package org.itp.utils;
 	        bb.putLong(uuid.getLeastSignificantBits());
 	        return bb.array();
 	    }
+	    public static UUID fromString(String uuidString) {
+	        return UUID.fromString(uuidString);
+	    }
 	}

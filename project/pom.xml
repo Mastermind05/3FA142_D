@@ -9,8 +9,8 @@
 	<artifactId>project</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-  <name>3FA142_D</name>
-  <description>AP Projekt</description>
+	<name>3FA142_D</name>
+	<description>AP Projekt</description>
 
 
 	<properties>
@@ -20,7 +20,7 @@
 		<jersey.version>3.1.9</jersey.version>
 		<jackson.version>2.18.0</jackson.version>
 	</properties>
-	
+
 	<packaging>war</packaging>
 
 	<dependencies>
@@ -115,6 +115,26 @@
 					<artifactId>maven-war-plugin</artifactId>
 					<version>3.3.1</version>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>3.0.0</version>
+					<executions>
+						<execution>
+							<id>run-server</id>
+							<phase>package</phase> <!-- Kann auch 'compile' oder
+							'verify' sein -->
+							<goals>
+								<goal>java</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<mainClass>org.itp.server.Server</mainClass>
+						<classpathScope>runtime</classpathScope>
+					</configuration>
+				</plugin>
+
 			</plugins>
 		</pluginManagement>
 	</build>
