@@ -7,6 +7,7 @@ import org.itp.project.SQLStatement;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class CustomerApi {
         }
         this.sqlStatement = new SQLStatement(dbConnection);
     }
-    // POST /customers - Create a new customer
+    // POST /customers - Erstelle neuen Customer
     @POST
     @Consumes("application/json")
     @Produces("application/json")
@@ -34,8 +35,20 @@ public class CustomerApi {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
     }
+    
+    // GET /customers - Gibt alle Customer zurück
+    @GET
+    @Produces("application/json")
+    public Response getAllCustomers() {
+        try {
+            List<Customer> customers = sqlStatement.getCustomers();
+            return Response.ok(customers).build();
+        } catch (SQLException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
 
-    // GET /customers/{uuid} - Get a specific customer by ID
+    // GET /customers/{uuid} - Holt den Customer mit einer spezifischen ID
     @GET
     @Path("/{uuid}")
     @Produces("application/json")
@@ -52,7 +65,7 @@ public class CustomerApi {
         }
     }
 
-    // PUT /customers - Update a customer
+    // PUT /customers - Updated einen Customer
     @PUT
     @Consumes("application/json")
     @Produces("text/plain")
@@ -69,7 +82,7 @@ public class CustomerApi {
         }
     }
 
-    // DELETE /customers/{uuid} - Delete a customer by ID
+    // DELETE /customers/{uuid} - Löscht einen Customer mit der vorgegebenen ID
     @DELETE
     @Path("/{uuid}")
     @Produces("text/plain")

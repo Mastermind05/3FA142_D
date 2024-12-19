@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +36,13 @@ public class SQLStatement {
         return ObjectMapper.getCustomer(rs);
     }
 	
+	public List<Customer> getCustomers() throws SQLException {
+        String query = "SELECT * FROM "+Tables.CUSTOMERS+";";
+        Statement stmt = dbConnection.getConnection().createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        stmt.close();
+        return ObjectMapper.getCustomers(rs);
+    }
 
     public void createCustomer(Customer customer) throws SQLException {
         String query = "INSERT INTO "+Tables.CUSTOMERS+" (id, firstName, lastName, birthDate, gender) VALUES (?,?,?,?,?);";
