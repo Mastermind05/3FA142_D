@@ -1,11 +1,15 @@
 package org.itp.dto;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.itp.enums.KindOfMeter;
 import org.itp.interfaces.ICustomer;
 import org.itp.interfaces.IReading;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Reading implements IReading{
 	
@@ -17,9 +21,20 @@ public class Reading implements IReading{
     private double meterCount;
     private String meterId;
     private boolean substitute;
+    private UUID customerId;
 
-    public Reading(UUID uuid, KindOfMeter kindOfMeter, LocalDate dateOfReading, Customer customer, String comment, double meterCount, String meterId, Boolean substitute) {
-        this.id = UUID.randomUUID();
+    @JsonCreator
+    public Reading(
+        @JsonProperty("id") UUID id,
+        @JsonProperty("kindOfMeter") KindOfMeter kindOfMeter,
+        @JsonProperty("dateOfReading") LocalDate dateOfReading,
+        @JsonProperty("comment") String comment,
+        @JsonProperty("meterCount") double meterCount,
+        @JsonProperty("meterId") String meterId,
+        @JsonProperty("substitute") Boolean substitute,
+        @JsonProperty("customer") Customer customer
+    ) {
+        this.id = Objects.requireNonNullElseGet(id, UUID::randomUUID);
         this.kindOfMeter = kindOfMeter;
         this.dateOfReading = dateOfReading;
         this.customer = customer;
@@ -28,6 +43,7 @@ public class Reading implements IReading{
         this.meterId = meterId;
         this.substitute = substitute;
     }
+    
     
     @Override
 	public void setComment(String comment) {
@@ -115,5 +131,6 @@ public class Reading implements IReading{
 		this.id = id;
 		
 	}
+
 
 }

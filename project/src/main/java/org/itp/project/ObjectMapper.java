@@ -57,11 +57,11 @@ public class ObjectMapper {
                 UUIDUtils.bytesAsUUID(rs.getBytes("id")),
                 KindOfMeter.valueOf(rs.getString("kindOfMeter")),
                 rs.getDate("dateOfReading").toLocalDate(),
-                customer,
                 rs.getString("comment"),
                 rs.getDouble("meterCount"),
                 rs.getString("meterId"),
-                rs.getBoolean("substitute")
+                rs.getBoolean("substitute"),
+                customer
         );
     }
 
@@ -79,12 +79,12 @@ public class ObjectMapper {
             readings.add(new Reading(
                     UUIDUtils.bytesAsUUID(rs.getBytes("id")),
                     KindOfMeter.valueOf(rs.getString("kindOfMeter")),
-                    rs.getDate("dateOfReading").toLocalDate(),
-                    customer,
+                    rs.getDate("dateOfReading").toLocalDate(),       
                     rs.getString("comment"),
                     rs.getDouble("meterCount"),
                     rs.getString("meterId"),
-                    rs.getBoolean("substitute")
+                    rs.getBoolean("substitute"),
+                    customer
             ));
         }
         return readings;

@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,19 +86,19 @@ public class SQLStatement {
         return rowsAffected;
     }
     
-    public void createReading(UUID id, String comment, LocalDate dateOfReading, String kindOfMeter, double meterCount, String meterId, boolean substitute, UUID customerId) {
+    public void createReading(Reading reading) {
     	 String query = "INSERT INTO " + Tables.READINGS + " (id, comment, dateOfReading, kindOfMeter, meterCount, meterId, substitute, customer_id) " +
     	                   "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     	 try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query)) {
-    	      stmt.setBytes(1, UUIDUtils.UUIDAsBytes(id));
-    	        stmt.setString(2, comment);
-    	        stmt.setDate(3, java.sql.Date.valueOf(dateOfReading));
-    	        stmt.setString(4, kindOfMeter);
-    	        stmt.setDouble(5, meterCount);
-    	        stmt.setString(6, meterId);
-    	        stmt.setBoolean(7, substitute);
-    	        stmt.setBytes(8, UUIDUtils.UUIDAsBytes(customerId));
+    	      stmt.setBytes(1, UUIDUtils.UUIDAsBytes(reading.getId()));
+    	        stmt.setString(2, reading.getComment());
+    	        stmt.setDate(3, Date.valueOf(reading.getDateOfReading()));
+    	        stmt.setString(4, reading.getKindOfMeter().toString());
+    	        stmt.setDouble(5, reading.getMeterCount());
+    	        stmt.setString(6, reading.getMeterId());
+    	        stmt.setBoolean(7, reading.getSubstitute());
+    	        stmt.setBytes(8, UUIDUtils.UUIDAsBytes(reading.getCustomer().getId()));
 
     	        stmt.executeUpdate();
     	    } catch (SQLException e) {
@@ -127,18 +126,18 @@ public class SQLStatement {
     }
 
     
-public void updateReading(UUID id, String comment, LocalDate dateOfReading, String kindOfMeter, double meterCount, String meterId, boolean substitute, UUID customerId) {
+public void updateReading(Reading reading) {
         String query = "UPDATE " + Tables.READINGS + " SET comment = ?, dateOfReading = ?, kindOfMeter = ?, meterCount = ?, meterId = ?, substitute = ?, customer_id = ? WHERE id = ?";
 
         try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query)) {
-            stmt.setString(1, comment);
-            stmt.setDate(2, java.sql.Date.valueOf(dateOfReading));
-            stmt.setString(3, kindOfMeter);
-            stmt.setDouble(4, meterCount);
-            stmt.setString(5, meterId);
-            stmt.setBoolean(6, substitute);
-            stmt.setBytes(7, UUIDUtils.UUIDAsBytes(customerId));
-            stmt.setBytes(8, UUIDUtils.UUIDAsBytes(id));
+            stmt.setString(1, reading.getComment());
+            stmt.setDate(2, Date.valueOf(reading.getDateOfReading()));
+            stmt.setString(3, reading.getKindOfMeter().toString());
+            stmt.setDouble(4, reading.getMeterCount());
+            stmt.setString(5, reading.getMeterId());
+            stmt.setBoolean(6, reading.getSubstitute());
+            stmt.setBytes(7, UUIDUtils.UUIDAsBytes(reading.getCustomer().getId()));
+            stmt.setBytes(8, UUIDUtils.UUIDAsBytes(reading.getId()));
 
             stmt.executeUpdate();
         } catch (SQLException e) {
