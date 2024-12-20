@@ -95,14 +95,9 @@ public class ReadingsApi {
             @QueryParam("kindOfMeter") String kindOfMeterStr) {
         
         try {
-            // Validierung des customerId-Parameters
-            if (customerId == null || customerId.isEmpty()) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Parameter 'customer' ist erforderlich.")
-                        .build();
-            }
-
-            UUID customerUUID = UUID.fromString(customerId);
+            // Konvertierung des customerId-Parameters (optional)
+            UUID customerUUID = (customerId != null && !customerId.isEmpty()) 
+                    ? UUID.fromString(customerId) : null;
 
             // Konvertierung der Datumsparameter
             LocalDate startDate = (startDateStr != null && !startDateStr.isEmpty()) 
@@ -133,4 +128,5 @@ public class ReadingsApi {
                     .build();
         }
     }
+
 }
