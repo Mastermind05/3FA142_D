@@ -134,7 +134,193 @@ public class SQLStatementTest {
             fail("Fehler beim Löschen des Readings: " + e.getMessage());
         }
     }
+        @Test
+        public void testGetReadingsWithAllParameters() {
+            try {
+            	sqlStatement.createCustomer(testCustomer);
+                // Beispiel-Readings erstellen
+                sqlStatement.createReading(new Reading(
+                    UUID.randomUUID(),
+                    KindOfMeter.STROM,
+                    LocalDate.of(2023, 1, 1),
+                    "Erstablesung",
+                    1234.56,
+                    "Meter-001",
+                    false,
+                    testCustomer
+                ));
+                sqlStatement.createReading(new Reading(
+                    UUID.randomUUID(),
+                    KindOfMeter.WASSER,
+                    LocalDate.of(2023, 5, 1),
+                    "Zwischenablesung",
+                    1500.75,
+                    "Meter-002",
+                    false,
+                    testCustomer
+                ));
+                dbConnection.getConnection().commit();
 
+                // Test mit allen Parametern
+                LocalDate startDate = LocalDate.of(2023, 1, 1);
+                LocalDate endDate = LocalDate.of(2023, 12, 31);
+                KindOfMeter kindOfMeter = KindOfMeter.STROM;
+
+                List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), startDate, endDate, kindOfMeter);
+                assertNotNull(readings);
+                assertEquals(1, readings.size(), "Es sollte nur ein Reading für diesen Zeitraum und Typ vorhanden sein");
+                assertEquals(KindOfMeter.STROM, readings.get(0).getKindOfMeter(), "Das Reading sollte vom Typ STROM sein");
+            } catch (SQLException e) {
+                fail("Fehler beim Abrufen der Readings: " + e.getMessage());
+            }
+        }
+
+        @Test
+        public void testGetReadingsWithStartDateOnly() {
+            try {
+            	sqlStatement.createCustomer(testCustomer);
+                // Beispiel-Readings erstellen
+                sqlStatement.createReading(new Reading(
+                    UUID.randomUUID(),
+                    KindOfMeter.STROM,
+                    LocalDate.of(2023, 1, 1),
+                    "Erstablesung",
+                    1234.56,
+                    "Meter-001",
+                    false,
+                    testCustomer
+                ));
+                sqlStatement.createReading(new Reading(
+                    UUID.randomUUID(),
+                    KindOfMeter.WASSER,
+                    LocalDate.of(2023, 5, 1),
+                    "Zwischenablesung",
+                    1500.75,
+                    "Meter-002",
+                    false,
+                    testCustomer
+                ));
+                dbConnection.getConnection().commit();
+
+                // Test mit nur Startdatum
+                LocalDate startDate = LocalDate.of(2023, 1, 1);
+                List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), startDate, null, null);
+                assertNotNull(readings);
+                assertTrue(readings.size() >= 2, "Es sollten mindestens zwei Readings nach dem Startdatum vorhanden sein");
+            } catch (SQLException e) {
+                fail("Fehler beim Abrufen der Readings: " + e.getMessage());
+            }
+        }
+
+        @Test
+        public void testGetReadingsWithEndDateOnly() {
+            try {
+            	sqlStatement.createCustomer(testCustomer);
+                // Beispiel-Readings erstellen
+                sqlStatement.createReading(new Reading(
+                    UUID.randomUUID(),
+                    KindOfMeter.STROM,
+                    LocalDate.of(2023, 1, 1),
+                    "Erstablesung",
+                    1234.56,
+                    "Meter-001",
+                    false,
+                    testCustomer
+                ));
+                sqlStatement.createReading(new Reading(
+                    UUID.randomUUID(),
+                    KindOfMeter.WASSER,
+                    LocalDate.of(2023, 5, 1),
+                    "Zwischenablesung",
+                    1500.75,
+                    "Meter-002",
+                    false,
+                    testCustomer
+                ));
+                dbConnection.getConnection().commit();
+
+                // Test mit nur Enddatum
+                LocalDate endDate = LocalDate.of(2023, 3, 1);
+                List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), null, endDate, null);
+                assertNotNull(readings);
+                assertTrue(readings.size() >= 1, "Es sollten mindestens Readings vor dem Enddatum vorhanden sein");
+            } catch (SQLException e) {
+                fail("Fehler beim Abrufen der Readings: " + e.getMessage());
+            }
+        }
+
+        @Test
+        public void testGetReadingsWithKindOfMeterOnly() {
+            try {
+            	sqlStatement.createCustomer(testCustomer);
+                // Beispiel-Readings erstellen
+                sqlStatement.createReading(new Reading(
+                    UUID.randomUUID(),
+                    KindOfMeter.STROM,
+                    LocalDate.of(2023, 1, 1),
+                    "Erstablesung",
+                    1234.56,
+                    "Meter-001",
+                    false,
+                    testCustomer
+                ));
+                sqlStatement.createReading(new Reading(
+                    UUID.randomUUID(),
+                    KindOfMeter.WASSER,
+                    LocalDate.of(2023, 5, 1),
+                    "Zwischenablesung",
+                    1500.75,
+                    "Meter-002",
+                    false,
+                    testCustomer
+                ));
+                dbConnection.getConnection().commit();
+
+                // Test mit nur KindOfMeter
+                List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), null, null, KindOfMeter.STROM);
+                assertNotNull(readings);
+                assertEquals(1, readings.size(), "Es sollte nur ein Reading vom Typ STROM vorhanden sein");
+                assertEquals(KindOfMeter.STROM, readings.get(0).getKindOfMeter(), "Das Reading sollte vom Typ STROM sein");
+            } catch (SQLException e) {
+                fail("Fehler beim Abrufen der Readings: " + e.getMessage());
+            } 
+            }
+
+        @Test
+        public void testGetReadingsWithNoFilters() {
+            try {
+            	sqlStatement.createCustomer(testCustomer);
+                // Beispiel-Readings erstellen
+                sqlStatement.createReading(new Reading(
+                    UUID.randomUUID(),
+                    KindOfMeter.STROM,
+                    LocalDate.of(2023, 1, 1),
+                    "Erstablesung",
+                    1234.56,
+                    "Meter-001",
+                    false,
+                    testCustomer
+                ));
+                sqlStatement.createReading(new Reading(
+                    UUID.randomUUID(),
+                    KindOfMeter.WASSER,
+                    LocalDate.of(2023, 5, 1),
+                    "Zwischenablesung",
+                    1500.75,
+                    "Meter-002",
+                    false,
+                    testCustomer
+                ));
+                dbConnection.getConnection().commit();
+
+                // Test mit keinem Filter
+                List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), null, null, null);
+                assertNotNull(readings);
+                assertTrue(readings.size() >= 2, "Es sollten mindestens zwei Readings vorhanden sein");
+            } catch (SQLException e) {
+                fail("Fehler beim Abrufen der Readings: " + e.getMessage());
+            }
+        }
     
     @Test
     public void testCreateCustomer() {

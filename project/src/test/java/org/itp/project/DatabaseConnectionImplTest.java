@@ -21,7 +21,6 @@ public class DatabaseConnectionImplTest {
         try {
 			dbConnection.openConnection(getTestProperties());
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -72,7 +71,6 @@ public class DatabaseConnectionImplTest {
     public void testCreateAllTables() {
         try {
             // Open the connection to the test database
-            dbConnection.openConnection(properties);
             Connection conn = dbConnection.getConnection();
             assertNotNull(conn, "Connection should be established");
 
