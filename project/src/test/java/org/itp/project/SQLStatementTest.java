@@ -5,6 +5,9 @@ import org.itp.dto.Reading;
 import org.itp.enums.Gender;
 import org.itp.enums.KindOfMeter;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import static org.junit.jupiter.api.Assertions.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -64,6 +67,7 @@ public class SQLStatementTest {
     }
     
     @Test
+    @DisplayName(value = "testCreateReading")
     public void testCreateReading() {
         try {
             // Kunde erstellen und committen
@@ -76,8 +80,8 @@ public class SQLStatementTest {
 
             // Reading abrufen und prüfen
             Reading retrievedReading = sqlStatement.getReading(testReading.getId());
-            assertNotNull(retrievedReading, "Das Reading sollte erfolgreich erstellt worden sein");
-            assertEquals(testReading.getComment(), retrievedReading.getComment(), "Der Kommentar sollte übereinstimmen");
+            assertNotNull(retrievedReading);
+            assertEquals(testReading.getComment(), retrievedReading.getComment());
 
         } catch (SQLException e) {
             fail("Fehler beim Erstellen des Readings: " + e.getMessage());
@@ -86,6 +90,7 @@ public class SQLStatementTest {
 
 
     @Test
+    @DisplayName(value = "testGetReadingsByCustomerId")
     public void testGetReadingsByCustomerId() {
         try {
         	sqlStatement.createCustomer(testCustomer);
@@ -93,14 +98,15 @@ public class SQLStatementTest {
             sqlStatement.createReading(testReading);
 
             List<Reading> readings = sqlStatement.getReadingsByCustomerId(testCustomer.getId());
-            assertFalse(readings.isEmpty(), "Es sollte mindestens ein Reading für den Kunden geben");
-            assertEquals(testReading.getId(), readings.get(0).getId(), "Die Reading-ID sollte übereinstimmen");
+            assertFalse(readings.isEmpty());
+            assertEquals(testReading.getId(), readings.get(0).getId());
         } catch (SQLException e) {
             fail("Fehler beim Abrufen der Readings: " + e.getMessage());
         }
     }
 
     @Test
+    @DisplayName(value = "testUpdateReading")
     public void testUpdateReading() {
         try {
         	sqlStatement.createCustomer(testCustomer);
@@ -112,13 +118,14 @@ public class SQLStatementTest {
             sqlStatement.updateReading(testReading);
 
             Reading updatedReading = sqlStatement.getReading(testReading.getId());
-            assertEquals("Aktualisierter Kommentar", updatedReading.getComment(), "Der Kommentar sollte aktualisiert worden sein");
+            assertEquals("Aktualisierter Kommentar", updatedReading.getComment());
         } catch (SQLException e) {
             fail("Fehler beim Aktualisieren des Readings: " + e.getMessage());
         }
     }
 
     @Test
+    @DisplayName(value = "testDeleteReading")
     public void testDeleteReading() {
         try {
         	sqlStatement.createCustomer(testCustomer);
@@ -129,207 +136,83 @@ public class SQLStatementTest {
             sqlStatement.deleteReading(testReading.getId());
 
             Reading deletedReading = sqlStatement.getReading(testReading.getId());
-            assertNull(deletedReading, "Das Reading sollte nach dem Löschen nicht mehr existieren");
+            assertNull(deletedReading);
         } catch (SQLException e) {
             fail("Fehler beim Löschen des Readings: " + e.getMessage());
         }
     }
-        @Test
-        public void testGetReadingsWithAllParameters() {
-            try {
-            	sqlStatement.createCustomer(testCustomer);
-                // Beispiel-Readings erstellen
-                sqlStatement.createReading(new Reading(
-                    UUID.randomUUID(),
-                    KindOfMeter.STROM,
-                    LocalDate.of(2023, 1, 1),
-                    "Erstablesung",
-                    1234.56,
-                    "Meter-001",
-                    false,
-                    testCustomer
-                ));
-                sqlStatement.createReading(new Reading(
-                    UUID.randomUUID(),
-                    KindOfMeter.WASSER,
-                    LocalDate.of(2023, 5, 1),
-                    "Zwischenablesung",
-                    1500.75,
-                    "Meter-002",
-                    false,
-                    testCustomer
-                ));
-                dbConnection.getConnection().commit();
+    private static Object[][] testCases() {
+        return new Object[][]{
+        	// Test mit allen Parametern
+            {LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31), KindOfMeter.STROM, 1, "Es sollte nur ein Reading für diesen Zeitraum und Typ vorhanden sein"},
 
-                // Test mit allen Parametern
-                LocalDate startDate = LocalDate.of(2023, 1, 1);
-                LocalDate endDate = LocalDate.of(2023, 12, 31);
-                KindOfMeter kindOfMeter = KindOfMeter.STROM;
+            // Test mit nur Startdatum
+            {LocalDate.of(2023, 1, 1), null, null, 2, "Es sollten mindestens zwei Readings nach dem Startdatum vorhanden sein"},
 
-                List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), startDate, endDate, kindOfMeter);
-                assertNotNull(readings);
-                assertEquals(1, readings.size(), "Es sollte nur ein Reading für diesen Zeitraum und Typ vorhanden sein");
-                assertEquals(KindOfMeter.STROM, readings.get(0).getKindOfMeter(), "Das Reading sollte vom Typ STROM sein");
-            } catch (SQLException e) {
-                fail("Fehler beim Abrufen der Readings: " + e.getMessage());
+            // Test mit nur Enddatum
+            {null, LocalDate.of(2023, 3, 1), null, 1, "Es sollten mindestens ein Reading vor dem Enddatum vorhanden sein"},
+
+            // Test mit nur KindOfMeter
+            {null, null, KindOfMeter.STROM, 1, "Es sollte nur ein Reading vom Typ STROM vorhanden sein"},
+
+            // Test mit keinem Filter
+            {null, null, null, 2, "Es sollten mindestens zwei Readings vorhanden sein"}
+        };
+    }
+
+    @ParameterizedTest 
+    @MethodSource("testCases")
+    @DisplayName(value = "testGetReadingsParameterized")
+    public void testGetReadings(LocalDate startDate, LocalDate endDate, KindOfMeter kindOfMeter, int expectedSize, String message) {
+        try {
+            sqlStatement.createCustomer(testCustomer);
+
+            // Beispiel-Readings erstellen
+            sqlStatement.createReading(new Reading(
+                UUID.randomUUID(),
+                KindOfMeter.STROM,
+                LocalDate.of(2023, 1, 1),
+                "Erstablesung",
+                1234.56,
+                "Meter-001",
+                false,
+                testCustomer
+            ));
+            sqlStatement.createReading(new Reading(
+                UUID.randomUUID(),
+                KindOfMeter.WASSER,
+                LocalDate.of(2023, 5, 1),
+                "Zwischenablesung",
+                1500.75,
+                "Meter-002",
+                false,
+                testCustomer
+            ));
+            dbConnection.getConnection().commit();
+
+            // Testausführung
+            List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), startDate, endDate, kindOfMeter);
+            assertNotNull(readings);
+            assertEquals(expectedSize, readings.size(), message);
+
+            if (kindOfMeter != null) {
+                assertTrue(readings.stream().allMatch(r -> r.getKindOfMeter() == kindOfMeter));
             }
+
+        } catch (SQLException e) {
+            fail("Fehler beim Abrufen der Readings: " + e.getMessage());
         }
-
-        @Test
-        public void testGetReadingsWithStartDateOnly() {
-            try {
-            	sqlStatement.createCustomer(testCustomer);
-                // Beispiel-Readings erstellen
-                sqlStatement.createReading(new Reading(
-                    UUID.randomUUID(),
-                    KindOfMeter.STROM,
-                    LocalDate.of(2023, 1, 1),
-                    "Erstablesung",
-                    1234.56,
-                    "Meter-001",
-                    false,
-                    testCustomer
-                ));
-                sqlStatement.createReading(new Reading(
-                    UUID.randomUUID(),
-                    KindOfMeter.WASSER,
-                    LocalDate.of(2023, 5, 1),
-                    "Zwischenablesung",
-                    1500.75,
-                    "Meter-002",
-                    false,
-                    testCustomer
-                ));
-                dbConnection.getConnection().commit();
-
-                // Test mit nur Startdatum
-                LocalDate startDate = LocalDate.of(2023, 1, 1);
-                List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), startDate, null, null);
-                assertNotNull(readings);
-                assertTrue(readings.size() >= 2, "Es sollten mindestens zwei Readings nach dem Startdatum vorhanden sein");
-            } catch (SQLException e) {
-                fail("Fehler beim Abrufen der Readings: " + e.getMessage());
-            }
-        }
-
-        @Test
-        public void testGetReadingsWithEndDateOnly() {
-            try {
-            	sqlStatement.createCustomer(testCustomer);
-                // Beispiel-Readings erstellen
-                sqlStatement.createReading(new Reading(
-                    UUID.randomUUID(),
-                    KindOfMeter.STROM,
-                    LocalDate.of(2023, 1, 1),
-                    "Erstablesung",
-                    1234.56,
-                    "Meter-001",
-                    false,
-                    testCustomer
-                ));
-                sqlStatement.createReading(new Reading(
-                    UUID.randomUUID(),
-                    KindOfMeter.WASSER,
-                    LocalDate.of(2023, 5, 1),
-                    "Zwischenablesung",
-                    1500.75,
-                    "Meter-002",
-                    false,
-                    testCustomer
-                ));
-                dbConnection.getConnection().commit();
-
-                // Test mit nur Enddatum
-                LocalDate endDate = LocalDate.of(2023, 3, 1);
-                List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), null, endDate, null);
-                assertNotNull(readings);
-                assertTrue(readings.size() >= 1, "Es sollten mindestens Readings vor dem Enddatum vorhanden sein");
-            } catch (SQLException e) {
-                fail("Fehler beim Abrufen der Readings: " + e.getMessage());
-            }
-        }
-
-        @Test
-        public void testGetReadingsWithKindOfMeterOnly() {
-            try {
-            	sqlStatement.createCustomer(testCustomer);
-                // Beispiel-Readings erstellen
-                sqlStatement.createReading(new Reading(
-                    UUID.randomUUID(),
-                    KindOfMeter.STROM,
-                    LocalDate.of(2023, 1, 1),
-                    "Erstablesung",
-                    1234.56,
-                    "Meter-001",
-                    false,
-                    testCustomer
-                ));
-                sqlStatement.createReading(new Reading(
-                    UUID.randomUUID(),
-                    KindOfMeter.WASSER,
-                    LocalDate.of(2023, 5, 1),
-                    "Zwischenablesung",
-                    1500.75,
-                    "Meter-002",
-                    false,
-                    testCustomer
-                ));
-                dbConnection.getConnection().commit();
-
-                // Test mit nur KindOfMeter
-                List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), null, null, KindOfMeter.STROM);
-                assertNotNull(readings);
-                assertEquals(1, readings.size(), "Es sollte nur ein Reading vom Typ STROM vorhanden sein");
-                assertEquals(KindOfMeter.STROM, readings.get(0).getKindOfMeter(), "Das Reading sollte vom Typ STROM sein");
-            } catch (SQLException e) {
-                fail("Fehler beim Abrufen der Readings: " + e.getMessage());
-            } 
-            }
-
-        @Test
-        public void testGetReadingsWithNoFilters() {
-            try {
-            	sqlStatement.createCustomer(testCustomer);
-                // Beispiel-Readings erstellen
-                sqlStatement.createReading(new Reading(
-                    UUID.randomUUID(),
-                    KindOfMeter.STROM,
-                    LocalDate.of(2023, 1, 1),
-                    "Erstablesung",
-                    1234.56,
-                    "Meter-001",
-                    false,
-                    testCustomer
-                ));
-                sqlStatement.createReading(new Reading(
-                    UUID.randomUUID(),
-                    KindOfMeter.WASSER,
-                    LocalDate.of(2023, 5, 1),
-                    "Zwischenablesung",
-                    1500.75,
-                    "Meter-002",
-                    false,
-                    testCustomer
-                ));
-                dbConnection.getConnection().commit();
-
-                // Test mit keinem Filter
-                List<Reading> readings = sqlStatement.getReadings(testCustomer.getId(), null, null, null);
-                assertNotNull(readings);
-                assertTrue(readings.size() >= 2, "Es sollten mindestens zwei Readings vorhanden sein");
-            } catch (SQLException e) {
-                fail("Fehler beim Abrufen der Readings: " + e.getMessage());
-            }
-        }
+    }
     
     @Test
+    @DisplayName(value = "testCreateCustomer")
     public void testCreateCustomer() {
         try {
             sqlStatement.createCustomer(testCustomer);
 
             // Kunden aus der Datenbank abrufen und überprüfen
             Customer retrievedCustomer = sqlStatement.getCustomer(testCustomer.getId());
-            assertNotNull(retrievedCustomer, "Der Kunde sollte erfolgreich erstellt worden sein");
+            assertNotNull(retrievedCustomer);
             assertEquals(testCustomer.getFirstName(), retrievedCustomer.getFirstName());
             assertEquals(testCustomer.getLastName(), retrievedCustomer.getLastName());
         } catch (SQLException e) {
@@ -338,12 +221,13 @@ public class SQLStatementTest {
     }
 
     @Test
+    @DisplayName(value = "testGetCustomer")
     public void testGetCustomer() {
         try {
             sqlStatement.createCustomer(testCustomer);
 
             Customer retrievedCustomer = sqlStatement.getCustomer(testCustomer.getId());
-            assertNotNull(retrievedCustomer, "Der Kunde sollte gefunden werden");
+            assertNotNull(retrievedCustomer);
             assertEquals(testCustomer.getFirstName(), retrievedCustomer.getFirstName());
         } catch (SQLException e) {
             fail("Fehler beim Abrufen des Kunden: " + e.getMessage());
@@ -351,18 +235,20 @@ public class SQLStatementTest {
     }
 
     @Test
+    @DisplayName(value = "testGetCustomers")
     public void testGetCustomers() {
         try {
             sqlStatement.createCustomer(testCustomer);
 
             List<Customer> customers = sqlStatement.getCustomers();
-            assertFalse(customers.isEmpty(), "Die Kundenliste sollte nicht leer sein");
+            assertFalse(customers.isEmpty());
         } catch (SQLException e) {
             fail("Fehler beim Abrufen der Kundenliste: " + e.getMessage());
         }
     }
 
     @Test
+    @DisplayName(value = "testUpdateCustomer")
     public void testUpdateCustomer() {
         try {
             sqlStatement.createCustomer(testCustomer);
@@ -374,7 +260,7 @@ public class SQLStatementTest {
 
             // Aktualisierten Kunden abrufen und prüfen
             Customer updatedCustomer = sqlStatement.getCustomer(testCustomer.getId());
-            assertEquals("Maxi", updatedCustomer.getFirstName(), "Der Vorname sollte aktualisiert worden sein");
+            assertEquals("Maxi", updatedCustomer.getFirstName());
             sqlStatement.deleteCustomer(testCustomer.getId());
         } catch (SQLException e) {
             fail("Fehler beim Aktualisieren des Kunden: " + e.getMessage());
@@ -382,6 +268,7 @@ public class SQLStatementTest {
     }
 
     @Test
+    @DisplayName(value = "testDeleteCustomer")
     public void testDeleteCustomer() {
         try {
             sqlStatement.createCustomer(testCustomer);
@@ -395,7 +282,7 @@ public class SQLStatementTest {
             int rowsAffected = sqlStatement.deleteCustomer(testCustomer.getId());
             dbConnection.getConnection().commit(); // Transaktion abschließen
 
-            assertEquals(1, rowsAffected, "Genau eine Zeile sollte gelöscht worden sein");
+            assertEquals(1, rowsAffected);
 
             // Prüfen, ob der Kunde nicht mehr existiert
             assertNull(sqlStatement.getCustomer(testCustomer.getId()));
@@ -409,7 +296,7 @@ public class SQLStatementTest {
 
 
     @AfterEach
-    public void tearDown() throws SQLException {
+    public void tearDown(TestInfo testInfo) throws SQLException {
     	//Löschen der Daten nach jedem Test
     	dbConnection.openConnection(getTestProperties());
     	dbConnection.truncateAllTables();
@@ -417,5 +304,6 @@ public class SQLStatementTest {
         if (dbConnection != null) {
             dbConnection.closeConnection();
         }
+        System.out.println("Erfolgreich getestet: " + testInfo.getDisplayName());
     }
 }
