@@ -10,6 +10,9 @@ import {FormsModule} from '@angular/forms';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatTableModule} from '@angular/material/table';
+import {MAT_DIALOG_DATA,MatDialog,MatDialogActions,MatDialogClose,MatDialogContent,MatDialogRef,MatDialogTitle,} from '@angular/material/dialog';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+
 
 
 @NgModule({
@@ -25,7 +28,13 @@ import {MatTableModule} from '@angular/material/table';
     MatFormFieldModule, 
     MatInputModule,
     MatDatepickerModule,
-    MatTableModule
+    MatTableModule,
+    MatButtonModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatCheckboxModule,
   ],
   exports: [
     MatToolbarModule,
@@ -36,7 +45,13 @@ import {MatTableModule} from '@angular/material/table';
     MatFormFieldModule, 
     MatInputModule,
     MatDatepickerModule,
-    MatTableModule
+    MatTableModule,
+    MatButtonModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatCheckboxModule
   ],
   providers: [provideNativeDateAdapter()],
 })

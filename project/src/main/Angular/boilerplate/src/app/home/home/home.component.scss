@@ -3,6 +3,7 @@
   }
 #Customer {
   margin-left : 20px;
+  margin-top: 15px;
 }
 .example-full-width {
   margin-right : 20px;
@@ -10,7 +11,27 @@
 #last {
   margin-left: 20px;
 }
-#reading {
+#customerbuttons {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+#sc {
+  margin-right: 10px;
+}
+#cc {
+  margin-right: 10px;
+}
+.container {
+  justify-content: space-between;
   margin: 20px;
-
+  box-sizing: border-box; /* berücksichtigt Padding und Border in der Breite */
+}
+#readinginput {
+  margin: 20px;
+}
+#sr {
+  margin: 10px;
+}
+#cr {
+  margin-right: 10px;
 }
