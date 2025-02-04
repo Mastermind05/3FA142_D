@@ -55,7 +55,7 @@ public class Server {
 
         // Starte den REST-Server in einem separaten Thread
         new Thread(() -> {
-            ResourceConfig config = new ResourceConfig().packages("org.itp.rest");
+            ResourceConfig config = new ResourceConfig().packages("org.itp.rest").register(CorsFilter.class);
             System.out.println("Starting the REST server at " + baseUri);
             server = JdkHttpServerFactory.createHttpServer(URI.create(baseUri), config);
             System.out.println("Bereit für Anfragen...");
