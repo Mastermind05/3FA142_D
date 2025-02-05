@@ -1,6 +1,7 @@
 package org.itp.dto;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.itp.enums.Gender;
@@ -17,13 +18,7 @@ public class Customer implements ICustomer{
     private LocalDate birthDate;
     private Gender gender;
     
-    public Customer(UUID id, String firstName, String lastName, Gender gender, LocalDate birthDate) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.gender = gender;
-        this.birthDate = birthDate;
-    }
+    
     public Customer(String firstName, String lastName, Gender gender, LocalDate birthDate) {
         this.id = UUID.randomUUID();
         this.firstName = firstName;
@@ -38,8 +33,12 @@ public class Customer implements ICustomer{
         @JsonProperty("lastName") String lastName,
         @JsonProperty("birthDate") LocalDate birthDate,
         @JsonProperty("gender") Gender gender
+        
     ) {
-        this.id = id;
+    	if (firstName == null || lastName == null || gender == null || birthDate == null) {
+            throw new IllegalArgumentException("Customer is missing required fields");
+        }
+    	this.id = Objects.requireNonNullElseGet(id, UUID::randomUUID);
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
