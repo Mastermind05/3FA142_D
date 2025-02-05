@@ -1,88 +1,44 @@
 <mat-toolbar>
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-      <mat-icon>house</mat-icon>
-    </button>
-    <span>Housemanagement</span>
-    <span class="example-spacer"></span>
-    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-      <mat-icon>settings</mat-icon>
-    </button>
+  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+    <mat-icon>house</mat-icon>
+  </button>
+  <span>Housemanagement</span>
+  <span class="example-spacer"></span>
+  <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+    <mat-icon>settings</mat-icon>
+  </button>
 </mat-toolbar>
 <div id="customerinput">
-<form class="example-form" id="Customer">
-  <mat-form-field class="example-full-width">
-    <mat-label>ID</mat-label>
-    <input matInput placeholder="UUID" value="">
-  </mat-form-field>
-  <mat-form-field class="example-full-width">
-    <mat-label>First Name</mat-label>
-    <input matInput placeholder="First Name" value="">
-  </mat-form-field>
-  <mat-form-field class="example-full-width">
-    <mat-label>Last Name</mat-label>
-    <input matInput placeholder="Last Name" value="">
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>Birthdate</mat-label>
-    <input matInput [matDatepicker]="picker">
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
-  <mat-form-field class="example-full-width" id="last">
-    <mat-label>Gender</mat-label>
-    <input matInput placeholder="Gender" value="">
-  </mat-form-field>
-</form>
+  <form class="example-form" id="Customer">
+    <mat-form-field class="example-full-width">
+      <mat-label>ID</mat-label>
+      <input matInput placeholder="UUID" [(ngModel)]="customer.id" name="id">
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>First Name</mat-label>
+      <input matInput placeholder="First Name" [(ngModel)]="customer.firstName" name="firstName">
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>Last Name</mat-label>
+      <input matInput placeholder="Last Name" [(ngModel)]="customer.lastName" name="lastName">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Birthdate</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="customer.birthDate" name="birthdate">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field class="example-full-width" id="last">
+      <mat-label>Gender</mat-label>
+      <input matInput placeholder="Gender" [(ngModel)]="customer.gender" name="gender">
+    </mat-form-field>
+  </form>
 </div>
 <div id="customerbuttons">
-<button mat-raised-button id="sc" >Search customer</button>
-<button mat-raised-button id="cc" (click)="addCustomer()">Create customer</button>
-<button mat-raised-button id="dc">Delete customer</button>
-</div>
-<div class="container">
-<div id="reading">
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table" id="reading" > 
-  <!-- Position -->
-  <ng-container matColumnDef="position">
-    <th mat-header-cell *matHeaderCellDef> No. </th>
-    <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-  </ng-container>
-
-  <!-- dateofreading -->
-  <ng-container matColumnDef="dateofreading">
-    <th mat-header-cell *matHeaderCellDef> date of reading </th>
-    <td mat-cell *matCellDef="let element"> {{element.dateOfReading}} </td>
-  </ng-container>
-
-  <!-- kindofmeter -->
-  <ng-container matColumnDef="kindofmeter">
-    <th mat-header-cell *matHeaderCellDef> kind of meter </th>
-    <td mat-cell *matCellDef="let element"> {{element.kindOfMeter}} </td>
-  </ng-container>
-
-  <!-- metercount -->
-  <ng-container matColumnDef="metercount">
-    <th mat-header-cell *matHeaderCellDef> metercount </th>
-    <td mat-cell *matCellDef="let element"> {{element.meterCount}} </td>
-  </ng-container>
-
-  <!-- meterid -->
-  <ng-container matColumnDef="meterid">
-    <th mat-header-cell *matHeaderCellDef> meterid </th>
-    <td mat-cell *matCellDef="let element"> {{element.meterId}} </td>
-  </ng-container>
-
-  <!-- substitute -->
-  <ng-container matColumnDef="substitute">
-    <th mat-header-cell *matHeaderCellDef> substitute </th>
-    <td mat-cell *matCellDef="let element"> {{element.substitute}} </td>
-  </ng-container>
-
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-</div>
+  <button mat-raised-button id="sc" (click)="getCustomer()">Search customer</button>
+  <button mat-raised-button id="cc" (click)="addCustomer()">Create customer</button>
+  <button mat-raised-button id="dc" (click)="deleteCustomer()">Delete customer</button>
+  <button mat-raised-button id="dc" (click)="updateCustomer()">Update customer</button>
 </div>
 <div id="readinginput">
   <mat-form-field style="margin-right: 20px;">
@@ -108,6 +64,51 @@
     <mat-label>Comment</mat-label>
     <textarea matInput placeholder=""></textarea>
   </mat-form-field>
+</div>
+<div class="container">
+  <div id="reading">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table" id="reading">
+      <!-- Position -->
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+      </ng-container>
+
+      <!-- dateofreading -->
+      <ng-container matColumnDef="dateofreading">
+        <th mat-header-cell *matHeaderCellDef> date of reading </th>
+        <td mat-cell *matCellDef="let element"> {{element.dateOfReading}} </td>
+      </ng-container>
+
+      <!-- kindofmeter -->
+      <ng-container matColumnDef="kindofmeter">
+        <th mat-header-cell *matHeaderCellDef> kind of meter </th>
+        <td mat-cell *matCellDef="let element"> {{element.kindOfMeter}} </td>
+      </ng-container>
+
+      <!-- metercount -->
+      <ng-container matColumnDef="metercount">
+        <th mat-header-cell *matHeaderCellDef> metercount </th>
+        <td mat-cell *matCellDef="let element"> {{element.meterCount}} </td>
+      </ng-container>
+
+      <!-- meterid -->
+      <ng-container matColumnDef="meterid">
+        <th mat-header-cell *matHeaderCellDef> meterid </th>
+        <td mat-cell *matCellDef="let element"> {{element.meterId}} </td>
+      </ng-container>
+
+      <!-- substitute -->
+      <ng-container matColumnDef="substitute">
+        <th mat-header-cell *matHeaderCellDef> substitute </th>
+        <td mat-cell *matCellDef="let element"> {{element.substitute}} </td>
+      </ng-container>
+
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
 </div>
 <div id="readingbuttons">
   <button mat-raised-button id="sr">Search readings</button>
