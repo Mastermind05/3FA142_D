@@ -130,39 +130,18 @@ public class DBConnection implements IDatabaseConnection{
 
 	@Override
 	public void removeAllTables() {
-	    Statement statement = null;
-	    try {
-	        if (conn == null || conn.isClosed()) {
-	            System.out.println("Connection is not open. Cannot remove tables.");
-	            return;
-	        }
-	        
-	        DatabaseMetaData metaData = conn.getMetaData();
-	        statement = conn.createStatement();
-
 	        // Alle Tabellen in der Datenbank abrufen
-	        try (ResultSet tables = metaData.getTables(null, null, "%", new String[] {"TABLE"})) {
-	            while (tables.next()) {
-	                String tableName = tables.getString("TABLE_NAME");
-	                
+	        try (Statement statement = conn.createStatement()){
 	                // SQL DROP TABLE-Befehl für jede Tabelle
-	                statement.executeUpdate("DROP TABLE " + tableName);
-	                System.out.println("Tabelle " + tableName + " wurde erfolgreich gelöscht.");
-	            }
-	        }
-	        
-	    } catch (SQLException e) {
+		    		statement.executeUpdate("SET foreign_key_checks = 0");
+	                statement.executeUpdate("DROP TABLE reading");
+	                statement.executeUpdate("DROP TABLE customers");
+	                System.out.println("Tabellen wurden erfolgreich gelöscht.");
+	        }catch (SQLException e) {
 	        System.err.println("Fehler beim Löschen der Tabellen: " + e.getMessage());
 	        e.printStackTrace();
-	    } finally {
-	        try {
-	            if (statement != null) statement.close();
-	        } catch (SQLException ex) {
-	            ex.printStackTrace();
+	        } 
 	        }
-	    }
-		
-	}
 
 	@Override
 	public void closeConnection() {
