@@ -41,7 +41,10 @@
   <button mat-raised-button id="sc" (click)="getCustomer()">Search customer</button>
   <button mat-raised-button id="cc" (click)="addCustomer()">Create customer</button>
   <button mat-raised-button id="dc" (click)="deleteCustomer()">Delete customer</button>
-  <button mat-raised-button id="dc" (click)="updateCustomer()">Update customer</button>
+  <button mat-raised-button id="uc" (click)="updateCustomer()">Update customer</button>
+</div>
+<div class="divider">
+<mat-divider></mat-divider>
 </div>
 <div id="readinginput">
   <mat-form-field style="margin-right: 20px;">
@@ -63,7 +66,7 @@
     <input matInput placeholder="Last Name" value="">
   </mat-form-field>
   <mat-checkbox class="example-margin" style="margin-right: 20px;">Substitute</mat-checkbox>
-  <mat-form-field class="example-full-width">
+  <mat-form-field class="example-full-width" id="comment">
     <mat-label>Comment</mat-label>
     <textarea matInput placeholder=""></textarea>
   </mat-form-field>

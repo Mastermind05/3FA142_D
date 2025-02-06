@@ -76,7 +76,7 @@ export class HomeComponent {
     const url = `${baseurl}customers/${this.customer.id}`;
     axios.delete<Customer>(url)
       .then(response => {
-        console.log('Customer deletet successfully', response.data);
+        console.log('Customer deleted successfully', response.data);
       })
       .catch(error => {
         console.error('Error deleting customer', error);
@@ -112,13 +112,24 @@ export class HomeComponent {
         console.log('Reading created successfully', response.data);
       })
       .catch(error => {
-        console.error('Error creating customer', error);
+        console.error('Error creating reading', error);
       });
       console.log(this.customer);
   }
   getReading() {
     const url = `${baseurl}customers/${this.reading.id}`; 
     axios.get<Reading>(url)
+      .then(response => {
+        console.log('Reading found successfully', response.data);
+      })
+      .catch(error => {
+        console.error('Error searching reading', error);
+      });
+      console.log(this.customer);
+  }
+  updateReading() {
+    const url = `${baseurl}readings`; 
+    axios.put<Reading>(url, this.reading)
       .then(response => {
         console.log('Reading updated successfully', response.data);
       })
@@ -127,25 +138,14 @@ export class HomeComponent {
       });
       console.log(this.customer);
   }
-  updateReading() {
-    const url = `${baseurl}readings`; 
-    axios.put<Reading>(url, this.reading)
-      .then(response => {
-        console.log('Customer updated successfully', response.data);
-      })
-      .catch(error => {
-        console.error('Error updating customer', error);
-      });
-      console.log(this.customer);
-  }
   deleteReading() {
     const url = `${baseurl}readings/${this.reading.id}`; 
     axios.delete<Customer>(url)
       .then(response => {
-        console.log('Customer updated successfully', response.data);
+        console.log('Reading deleted successfully', response.data);
       })
       .catch(error => {
-        console.error('Error updating customer', error);
+        console.error('Error deleting reading', error);
       });
       console.log(this.customer);
   }

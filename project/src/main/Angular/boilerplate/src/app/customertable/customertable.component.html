@@ -1,32 +1,29 @@
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
-    <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
-  
-    <!-- Position Column -->
+    <!-- id Column -->
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef> No. </th>
       <td mat-cell *matCellDef="let element"> {{element.id}} </td>
     </ng-container>
   
-    <!-- Name Column -->
+    <!-- firstName Column -->
     <ng-container matColumnDef="firstName">
       <th mat-header-cell *matHeaderCellDef> firstName </th>
       <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
     </ng-container>
   
-    <!-- Weight Column -->
+    <!-- LastName Column -->
     <ng-container matColumnDef="lastName">
       <th mat-header-cell *matHeaderCellDef> lastName </th>
       <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
     </ng-container>
   
-    <!-- Symbol Column -->
+    <!-- birthDate Column -->
     <ng-container matColumnDef="birthDate">
       <th mat-header-cell *matHeaderCellDef> birthDate </th>
       <td mat-cell *matCellDef="let element"> {{element.birthDate}} </td>
     </ng-container>
   
+    <!--gender Column-->
     <ng-container matColumnDef="gender">
         <th mat-header-cell *matHeaderCellDef> gender </th>
         <td mat-cell *matCellDef="let element"> {{element.gender}} </td>
