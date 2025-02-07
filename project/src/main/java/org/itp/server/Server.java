@@ -3,7 +3,6 @@ package org.itp.server;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.itp.project.DBConnection;
-import org.itp.project.SQLStatement;
 
 import com.sun.net.httpserver.HttpServer;
 
@@ -19,9 +18,17 @@ public class Server {
     private static DBConnection dbConnection = new DBConnection();
     private static Properties properties;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         try {
             // Starte die Datenbankverbindung und den Server
+        	InputStream input = Server.class.getClassLoader().getResourceAsStream("credentials.properties");
+            if (input == null) {
+                throw new IOException("credentials.properties not found");
+            }
+            properties.load(input);
+
+            dbConnection.openConnection(properties);
+            dbConnection.createAllTables();
             startServer(BASE_URI);
         } catch (IOException e) {
             System.err.println("Fehler beim Starten des Servers: " + e.getMessage());
@@ -30,36 +37,11 @@ public class Server {
     }
 
     public static void startServer(String baseUri) throws IOException {
-        dbConnection = new DBConnection();
-        properties = new Properties();
-
-        // Lade die Verbindung zur Datenbank
-        try {
-            InputStream input = Server.class.getClassLoader().getResourceAsStream("credentials.properties");
-            if (input == null) {
-                throw new IOException("credentials.properties not found");
-            }
-            properties.load(input);
-
-            dbConnection.openConnection(properties);
-            dbConnection.createAllTables();
-            @SuppressWarnings("unused")
-			SQLStatement sqlStatement = new SQLStatement(dbConnection);
-
-            System.out.println("Datenbankverbindung erfolgreich hergestellt und Tabellen erstellt.");
-        } catch (IOException | SQLException e) {
-            System.err.println("Fehler bei der Datenbankverbindung: " + e.getMessage());
-            e.printStackTrace();
-            return; // Server nicht starten, wenn die Datenbankverbindung fehlschlägt
-        }
-
-        // Starte den REST-Server in einem separaten Thread
-        new Thread(() -> {
+        // Starte den REST-Server
             ResourceConfig config = new ResourceConfig().packages("org.itp.rest").register(CorsFilter.class);
             System.out.println("Starting the REST server at " + baseUri);
             server = JdkHttpServerFactory.createHttpServer(URI.create(baseUri), config);
             System.out.println("Bereit für Anfragen...");
-        }).start();
     }
 
 
