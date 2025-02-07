@@ -3,7 +3,6 @@ package org.itp.server;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.itp.project.DBConnection;
-import org.itp.project.SQLStatement;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpServer;
@@ -21,9 +20,17 @@ public class Server {
     private static DBConnection dbConnection = new DBConnection();
     private static Properties properties;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         try {
             // Starte die Datenbankverbindung und den Server
+        	InputStream input = Server.class.getClassLoader().getResourceAsStream("credentials.properties");
+            if (input == null) {
+                throw new IOException("credentials.properties not found");
+            }
+            properties.load(input);
+
+            dbConnection.openConnection(properties);
+            dbConnection.createAllTables();
             startServer(BASE_URI);
         } catch (IOException e) {
             System.err.println("Fehler beim Starten des Servers: " + e.getMessage());
@@ -32,6 +39,7 @@ public class Server {
     }
 
     public static void startServer(String baseUri) throws IOException {
+<<<<<<< HEAD
         dbConnection = new DBConnection();
         properties = new Properties();
 
@@ -59,11 +67,13 @@ public class Server {
         new Thread(() -> {
         	JavaTimeModule javaTimeModule = new JavaTimeModule();
             javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer());
+=======
+        // Starte den REST-Server
+>>>>>>> 72d7f09 (#49: Implementierung des Server Tests)
             ResourceConfig config = new ResourceConfig().packages("org.itp.rest").register(CorsFilter.class);
             System.out.println("Starting the REST server at " + baseUri);
             server = JdkHttpServerFactory.createHttpServer(URI.create(baseUri), config);
             System.out.println("Bereit für Anfragen...");
-        }).start();
     }
 
 
