@@ -21,8 +21,8 @@ public class ObjectMapper {
                 UUIDUtils.bytesAsUUID(rs.getBytes("id")),
                 rs.getString("firstName"),
                 rs.getString("lastName"),
-                Gender.valueOf(rs.getString("gender")),
-                rs.getDate("birthDate").toLocalDate()
+                rs.getDate("birthDate").toLocalDate(),
+                Gender.valueOf(rs.getString("gender"))
         );
     }
 
@@ -33,8 +33,8 @@ public class ObjectMapper {
                     UUIDUtils.bytesAsUUID(rs.getBytes("id")),
                     rs.getString("firstName"),
                     rs.getString("lastName"),
-                    Gender.valueOf(rs.getString("gender")),
-                    rs.getDate("birthDate").toLocalDate()
+                    rs.getDate("birthDate").toLocalDate(),
+                    Gender.valueOf(rs.getString("gender"))
             ));
         }
         return customers;
