@@ -1,7 +1,15 @@
 package org.itp.rest;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
+import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.when;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.Properties;
+import java.util.UUID;
+
 import org.itp.dto.Customer;
 import org.itp.enums.Gender;
 import org.itp.project.DBConnection;
@@ -11,17 +19,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import io.restassured.module.jsv.JsonSchemaValidator;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.UUID;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.*;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 
 public class CustomerApiTest {
 
