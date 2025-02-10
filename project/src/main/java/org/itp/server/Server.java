@@ -23,19 +23,22 @@ public class Server {
     public static void main(String[] args) throws SQLException {
         try {
             // Starte die Datenbankverbindung und den Server
-        	InputStream input = Server.class.getClassLoader().getResourceAsStream("credentials.properties");
-            if (input == null) {
-                throw new IOException("credentials.properties not found");
-            }
-            properties.load(input);
-
-            dbConnection.openConnection(properties);
+            dbConnection.openConnection(getTestProperties());
             dbConnection.createAllTables();
             startServer(BASE_URI);
         } catch (IOException e) {
             System.err.println("Fehler beim Starten des Servers: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+    
+    private static Properties getTestProperties() {
+        Properties properties = new Properties();
+        properties.setProperty("testuser.db.url", "jdbc:mariadb://localhost:3306/test");
+        properties.setProperty("testuser.db.user", "root");
+        properties.setProperty("testuser.db.pw", "password");
+        System.setProperty("user.name", "testuser");
+        return properties;
     }
 
     public static void startServer(String baseUri) throws IOException {
