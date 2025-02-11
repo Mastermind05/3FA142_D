@@ -23,8 +23,8 @@ public class ReadingsApi {
     public ReadingsApi() {
         DBConnection dbConnection = new DBConnection();
         try {
-            dbConnection.openConnection(new Properties()); // Hier sicherstellen, dass die Properties korrekt geladen werden
-        } catch (SQLException e) {
+            dbConnection.openConnection(new Properties()); 
+            } catch (SQLException e) {
             e.printStackTrace();
         }
         this.sqlStatement = new SQLStatement(dbConnection);
