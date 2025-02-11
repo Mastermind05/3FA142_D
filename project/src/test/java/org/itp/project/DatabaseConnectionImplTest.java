@@ -13,7 +13,8 @@ import java.util.Properties;
 public class DatabaseConnectionImplTest {
 
     private DBConnection dbConnection;
-    private Properties properties;
+    @SuppressWarnings("unused")
+	private Properties properties;
 
     @BeforeEach
     public void setUp() {
