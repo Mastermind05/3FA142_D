@@ -101,6 +101,17 @@ public class ReadingsApiTest {
                 .statusCode(201)
                 .body(equalTo("Reading created successfully"));
     }
+    
+/*    @Test
+    public void testGetReadingById() {
+        UUID Id = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+        given()
+                .when()
+                .get("/readings/" + Id)
+                .then()
+                .statusCode(200)
+                .body(equalTo("Reading not found"));
+    }*/
 
     @Test
     public void testUpdateReading() {

@@ -112,7 +112,7 @@ public class CustomerApiTest {
         .then()
             .statusCode(200)
             .assertThat()
-        //    .body(matchesJsonSchemaInClasspath("JSON_Schema_Customer.json"))
+  //         .body(matchesJsonSchemaInClasspath("JSON_Schema_Customer.json"))
             ;
     }
 
