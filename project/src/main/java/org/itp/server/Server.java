@@ -16,27 +16,20 @@ public class Server {
     private static final String BASE_URI = "http://localhost:8080/test/ressources/";
     private static HttpServer server;
     private static DBConnection dbConnection = new DBConnection();
-    private static Properties properties;
 
     public static void main(String[] args) throws SQLException {
         try {
-            // Starte die Datenbankverbindung und den Server
-            dbConnection.openConnection(getTestProperties());
+        	Properties properties = new Properties();
+        	InputStream input = DBConnection.class.getClassLoader().getResourceAsStream("credentials.properties");
+            properties.load(input);
+        	// Starte die Datenbankverbindung und den Server
+            dbConnection.openConnection(properties);
             dbConnection.createAllTables();
             startServer(BASE_URI);
         } catch (IOException e) {
             System.err.println("Fehler beim Starten des Servers: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-    
-    private static Properties getTestProperties() {
-        Properties properties = new Properties();
-        properties.setProperty("testuser.db.url", "jdbc:mariadb://localhost:3306/test");
-        properties.setProperty("testuser.db.user", "root");
-        properties.setProperty("testuser.db.pw", "password");
-        System.setProperty("user.name", "testuser");
-        return properties;
     }
 
     public static void startServer(String baseUri) throws IOException {
