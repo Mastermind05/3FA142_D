@@ -190,7 +190,7 @@ public void updateReading(Reading reading) {
     }
     
  // Methode zum Erstellen eines Benutzers mit gehashtem Passwort
-    public void createCredentials(String username, String password) throws SQLException {
+    public boolean createCredentials(String username, String password) throws SQLException {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12)); // Passwort sicher hashen
         String query = "INSERT INTO " + Tables.AUTHENTIFICATION + " (username, password) VALUES (?, ?)";
 
@@ -200,9 +200,11 @@ public void updateReading(Reading reading) {
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
-                throw new SQLException("Fehler beim Erstellen der Anmeldeinformationen.");
+            	System.out.println("Fehler beim Erstellen der Anmeldeinformationen.");
+            	return false;
             }
         }
+		return true;
     }
 
     // Methode zur Authentifizierung des Benutzers mit gehashtem Passwort

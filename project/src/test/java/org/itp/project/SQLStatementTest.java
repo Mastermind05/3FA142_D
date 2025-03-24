@@ -293,6 +293,41 @@ public class SQLStatementTest {
         }
     }
 
+    @Test
+    @DisplayName(value = "testCreateCredentials")
+    public void testCreateCredentials() {
+        try {
+            String username = "testuser";
+            String password = "securePassword123";
+            sqlStatement.createCredentials(username, password);
+            
+            boolean userExists = sqlStatement.authenticateUser(username, password);
+            assertTrue(userExists, "Benutzer sollte erfolgreich erstellt und authentifiziert werden können.");
+        } catch (SQLException e) {
+            fail("Fehler beim Erstellen der Anmeldeinformationen: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @DisplayName(value = "testAuthenticateUser")
+    public void testAuthenticateUser() {
+        try {
+            String username = "authTestUser";
+            String password = "testPassword!234";
+            sqlStatement.createCredentials(username, password);
+            
+            boolean isAuthenticated = sqlStatement.authenticateUser(username, password);
+            assertTrue(isAuthenticated, "Benutzer sollte erfolgreich authentifiziert werden.");
+            
+            boolean wrongPassword = sqlStatement.authenticateUser(username, "wrongPassword");
+            assertFalse(wrongPassword, "Falsches Passwort sollte nicht akzeptiert werden.");
+            
+            boolean nonExistentUser = sqlStatement.authenticateUser("unknownUser", "password");
+            assertFalse(nonExistentUser, "Nicht existierender Benutzer sollte nicht authentifiziert werden.");
+        } catch (SQLException e) {
+            fail("Fehler bei der Authentifizierung: " + e.getMessage());
+        }
+    }
 
 
     @AfterEach
