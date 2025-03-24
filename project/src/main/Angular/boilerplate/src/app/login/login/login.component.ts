@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import axios from 'axios';  // Axios importieren
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -15,15 +18,24 @@ export class LoginComponent {
 
   constructor(private router: Router) {}
 
+  // login Methode
   login() {
-    const correctPassword = '123456'; // Beispielpasswort (sollte im echten Fall nicht hart codiert sein)
-    console.log(this.password)
-    if (this.password === correctPassword) {
-      sessionStorage.setItem('isAuthenticated', 'true'); // Benutzer als authentifiziert markieren
-      this.router.navigate(['/']); // Nach erfolgreicher Anmeldung zur Startseite navigieren
-      console.log(localStorage.getItem('isAuthenticated'))
-    } else {
-      this.errorMessage = 'Falsches Passwort!';
-    }
+    const loginPayload = {
+      username: this.username,
+      password: this.password
+    };
+
+    axios.post('http://localhost:8080/test/ressources/auth/login', loginPayload)
+      .then(response => {
+        // Erfolgreiche Antwort
+        console.log('Login erfolgreich:', response);
+        sessionStorage.setItem('isAuthenticated', 'true');
+        this.router.navigate(['/']);
+      })
+      .catch(error => {
+        // Fehlerbehandlung
+        console.error('Fehler bei der Anmeldung:', error);
+        this.errorMessage = 'Falsches Passwort oder Benutzername!';
+      });
   }
 }
