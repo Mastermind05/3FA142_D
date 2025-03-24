@@ -1,23 +1,18 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanActivateFn } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class authGuard implements CanActivate {
+export const authGuard: CanActivateFn = (route, state) => {
+  const router = inject(Router);
+  const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
 
-  constructor(private router: Router) {}
+  console.log('Auth Guard prüft:', isAuthenticated); // 🛠 Debugging: Zeigt, ob Auth erkannt wird
 
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    const isAuthenticated = localStorage.getItem('isAuthenticated');
-    if (isAuthenticated === 'true') {
-      return true;  // Benutzer ist authentifiziert
-    } else {
-      this.router.navigate(['/login']);  // Weiterleitung zur Login-Seite
-      return false;  // Zugriff verweigern
-    }
+  if (isAuthenticated) {
+    return true;
+  } else {
+    console.log('Nicht eingeloggt! Leite weiter auf /login'); // 🛠 Debugging
+    router.navigate(['/login']);
+    return false;
   }
-}
+};

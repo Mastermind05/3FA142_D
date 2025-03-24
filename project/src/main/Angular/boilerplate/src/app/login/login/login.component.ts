@@ -17,10 +17,11 @@ export class LoginComponent {
 
   login() {
     const correctPassword = '123456'; // Beispielpasswort (sollte im echten Fall nicht hart codiert sein)
-
+    console.log(this.password)
     if (this.password === correctPassword) {
-      localStorage.setItem('isAuthenticated', 'true'); // Benutzer als authentifiziert markieren
+      sessionStorage.setItem('isAuthenticated', 'true'); // Benutzer als authentifiziert markieren
       this.router.navigate(['/']); // Nach erfolgreicher Anmeldung zur Startseite navigieren
+      console.log(localStorage.getItem('isAuthenticated'))
     } else {
       this.errorMessage = 'Falsches Passwort!';
     }

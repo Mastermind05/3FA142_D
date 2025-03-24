@@ -1,30 +1,37 @@
 import { TestBed } from '@angular/core/testing';
-import { authGuard } from './auth.guard'; // Importiere den Guard
-import { RouterTestingModule } from '@angular/router/testing'; // Für Routing
-import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { authGuard } from './auth.guard';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 describe('authGuard', () => {
-  let guard: authGuard;
+  let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
+    routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']); // Mock Router mit `navigate()`
+
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],  // Wir fügen RouterTestingModule hinzu, um Router zu simulieren
-      providers: [authGuard]  // Wir fügen den Guard als Provider hinzu
+      imports: [RouterTestingModule],
+      providers: [{ provide: Router, useValue: routerSpy }] // Bereitstellen des gemockten Routers
     });
-
-    guard = TestBed.inject(authGuard);  // Instanziiere den Guard mit TestBed
   });
 
-  it('should be created', () => {
-    expect(guard).toBeTruthy();  // Überprüfe, ob der Guard instanziiert wurde
+  it('should allow navigation when authenticated', () => {
+    localStorage.setItem('isAuthenticated', 'true'); // Setze Auth-Status
+
+    const next: ActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
+    const state: RouterStateSnapshot = { url: '/home' } as RouterStateSnapshot;
+
+    expect(authGuard(next, state)).toBeTrue(); // Sollte Zugriff erlauben
   });
 
-  it('should return true from canActivate', () => {
-    // Mock-Daten für `next` und `state`
-    const next: ActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;  // Leerer Mock für `next`
-    const state: RouterStateSnapshot = { url: '/test' } as RouterStateSnapshot;  // Leerer Mock für `state`
+  it('should deny navigation and redirect when not authenticated', () => {
+    localStorage.removeItem('isAuthenticated'); // Stelle sicher, dass der User nicht eingeloggt ist
 
-    // Teste, ob canActivate wahr zurückgibt
-    expect(guard.canActivate(next, state)).toBe(true);  // Hier erwartet man, dass true zurückgegeben wird
+    const next: ActivatedRouteSnapshot = {} as ActivatedRouteSnapshot;
+    const state: RouterStateSnapshot = { url: '/home' } as RouterStateSnapshot;
+
+    expect(authGuard(next, state)).toBeFalse(); // Sollte Zugriff verweigern
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']); // Sollte zur Login-Seite weiterleiten
   });
 });
