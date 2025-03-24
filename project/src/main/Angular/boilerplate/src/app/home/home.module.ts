@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home/home.component';
 import { StartseiteRoutingModule } from './home-routing.module';
 import { SharedModule } from '../shared/shared.module';
-import { CustomertableComponent } from '../customertable/customertable.component';
+import { MainModule } from '../main/main.module';
+import { MainComponent } from '../main/main/main.component';
+
 
 @NgModule({
   declarations: [
@@ -13,7 +15,7 @@ import { CustomertableComponent } from '../customertable/customertable.component
     CommonModule,
     StartseiteRoutingModule,
     SharedModule,
-    CustomertableComponent
+    MainComponent
   ]
 })
 export class StartseiteModule { }
