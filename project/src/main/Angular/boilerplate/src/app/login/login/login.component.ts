@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
+  username: string = '';
   password: string = '';
   errorMessage: string = '';
 
