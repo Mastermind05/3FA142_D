@@ -10,7 +10,7 @@
 </mat-toolbar>
 <div class="table-container" id="table1">
   <div class="table-actions">
-    <button mat-button color="primary">Hinzufügen</button>
+    <button mat-button color="primary" (click)="openDialog()">Hinzufügen</button>
     <button mat-button color="accent">Import</button>
     <button mat-button color="accent">Export</button>
   </div>
@@ -62,4 +62,5 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+  
 </div>

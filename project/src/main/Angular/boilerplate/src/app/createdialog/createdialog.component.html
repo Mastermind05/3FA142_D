@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>Create Customer</h2>
+<mat-dialog-content>
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>Vorname</mat-label>
+      <input matInput placeholder="Placeholder">
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>Nachname</mat-label>
+      <input matInput placeholder="Placeholder">
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field>
+      <mat-label>Geschlecht</mat-label>
+      <mat-select>
+        <mat-option value="option1">M</mat-option>
+        <mat-option value="option2">W</mat-option>
+        <mat-option value="option3">D</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>Geburtsdatum</mat-label>
+      <input matInput placeholder="Placeholder">
+    </mat-form-field>
+  </p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Create</button>
+  <button mat-button mat-dialog-close cdkFocusInitial>Schließen</button>
+</mat-dialog-actions>

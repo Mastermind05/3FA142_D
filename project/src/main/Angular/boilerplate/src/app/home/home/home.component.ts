@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { DialogService } from '../../services/dialog.service';
 
 export interface Person {
   id: number;
@@ -19,8 +19,8 @@ const baseurl = 'http://localhost:8080/test/ressources/';
   styleUrl: './home.component.scss',
 })
 
-
 export class HomeComponent {
+  constructor(private dialogService: DialogService) {}
   displayedColumns: string[] = ['id', 'firstName', 'lastName', 'birthdate', 'gender', 'actions'];
   dataSource = [
     { 
@@ -31,4 +31,7 @@ export class HomeComponent {
       gender: 'male' 
     }
   ];
+  openDialog() {
+    this.dialogService.openDialog();
+  }
 }
