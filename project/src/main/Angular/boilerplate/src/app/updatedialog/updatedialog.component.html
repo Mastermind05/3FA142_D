@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>Benutzerdaten bearbeiten</h1>
+
+<mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>Vorname</mat-label>
+    <input matInput [(ngModel)]="data.firstName">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Nachname</mat-label>
+    <input matInput [(ngModel)]="data.lastName">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Geburtsdatum</mat-label>
+    <input matInput [(ngModel)]="data.birthDate" type="date">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Geschlecht</mat-label>
+    <mat-select [(ngModel)]="data.gender">
+      <mat-option value="M">M</mat-option>
+      <mat-option value="W">W</mat-option>
+      <mat-option value="D">D</mat-option>
+      <mat-option value="U">U</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+  <button mat-button color="primary" (click)="onSave()">Speichern</button>
+</mat-dialog-actions>

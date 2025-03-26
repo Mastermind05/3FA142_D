@@ -6,6 +6,7 @@ import { SharedModule } from './shared/shared.module';
 import { StartseiteModule } from './home/home.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { LoginComponent } from './login/login/login.component';
+import { UpdatedialogComponent } from './updatedialog/updatedialog.component';
 
 
 @NgModule({

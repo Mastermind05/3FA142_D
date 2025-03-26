@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { DialogService } from '../../services/dialog.service';
 import axios from 'axios';
+import { MatDialog } from '@angular/material/dialog';
+import { UpdatedialogComponent } from '../../updatedialog/updatedialog.component';
 
 export interface Person {
   id: string;
@@ -19,8 +21,7 @@ const baseurl = 'http://localhost:8080/test/ressources/customers';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  constructor(private dialogService: DialogService) {}
-
+  constructor(private dialogService: DialogService, public dialog: MatDialog) {}
   displayedColumns: string[] = ['id', 'firstName', 'lastName', 'birthDate', 'gender', 'actions'];
   dataSource: Person[] = []; // Startet als leeres Array
 
@@ -38,7 +39,49 @@ export class HomeComponent {
     }
   }
   
-  //(click)="deleteUser(element.id)"
+  editingUser: any = null;
+
+  // Bearbeiten-Methoden
+  editUser(user: any) {
+    this.editingUser = { ...user }; // Kopiere die Daten, um sie zu bearbeiten
+  }
+
+  cancelEdit() {
+    this.editingUser = null; // Setze die Bearbeitung zurück
+  }
+
+  openEditDialog(user: any): void {
+    const dialogRef = this.dialog.open(UpdatedialogComponent, {
+      width: '400px',
+      data: { ...user } // Kopiere die Benutzerdaten in den Dialog
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.updateUser(result); // Wenn Daten zurückgegeben wurden, die Benutzerinformationen aktualisieren
+      }
+    });
+  }
+
+  // Update-Methode
+  async updateUser(user: any) {
+    const url = `http://localhost:8080/test/ressources/customers/`;
+
+    try {
+      console.log(user)
+      const response = await axios.put(url, user);
+      console.log('Erfolgreich aktualisiert:', response.data);
+
+      // Nach erfolgreichem Update die Daten in der Tabelle aktualisieren
+      const index = this.dataSource.findIndex(u => u.id === user.id);
+      if (index !== -1) {
+        this.dataSource[index] = { ...user };
+      }
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren:', error);
+    }
+  }
+  
   async deleteUser(id: string) {
     const url = `http://localhost:8080/test/ressources/customers/${id}`;
 
