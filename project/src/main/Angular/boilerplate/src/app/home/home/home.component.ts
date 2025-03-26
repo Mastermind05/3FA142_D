@@ -3,6 +3,7 @@ import { DialogService } from '../../services/dialog.service';
 import axios from 'axios';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdatedialogComponent } from '../../updatedialog/updatedialog.component';
+import { Router } from '@angular/router';
 
 export interface Person {
   id: string;
@@ -21,7 +22,7 @@ const baseurl = 'http://localhost:8080/test/ressources/customers';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  constructor(private dialogService: DialogService, public dialog: MatDialog) {}
+  constructor(private dialogService: DialogService, public dialog: MatDialog, private router: Router) {}
   displayedColumns: string[] = ['id', 'firstName', 'lastName', 'birthDate', 'gender', 'actions'];
   dataSource: Person[] = []; // Startet als leeres Array
 
@@ -116,5 +117,9 @@ export class HomeComponent {
     } catch (error) {
       console.error('Fehler beim Öffnen des Dialogs:', error);
     }
+  }
+  goToReading() {
+    console.log('Session Storage:', sessionStorage.getItem('isAuthenticated'));
+    this.router.navigate(['/reading']);
   }
 }

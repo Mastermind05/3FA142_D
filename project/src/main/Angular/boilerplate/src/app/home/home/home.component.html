@@ -54,7 +54,7 @@
         <button mat-icon-button color="primary" (click)="openEditDialog(element)">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="accent" [routerLink]="['/readings', element.id]">
+        <button mat-icon-button color="accent" (click)="goToReading()">
           <mat-icon>visibility</mat-icon>
         </button>
         <button mat-icon-button color="warn" (click)="deleteUser(element.id)">
