@@ -34,9 +34,9 @@
     </ng-container>
 
     <!-- Spalte für das Geburtsdatum -->
-    <ng-container matColumnDef="birthdate">
+    <ng-container matColumnDef="birthDate">
       <th mat-header-cell *matHeaderCellDef> Geburtsdatum </th>
-      <td mat-cell *matCellDef="let element"> {{element.birthdate}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.birthDate}} </td>
     </ng-container>
 
     <!-- Spalte für das Geschlecht -->
@@ -52,7 +52,7 @@
         <button mat-icon-button color="primary">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="warn" >
+        <button mat-icon-button color="warn" (click)="deleteUser(element.id)">
           <mat-icon>delete</mat-icon>
         </button>
       </td>

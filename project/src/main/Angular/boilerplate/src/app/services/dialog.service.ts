@@ -7,9 +7,10 @@ import { CreatedialogComponent } from '../createdialog/createdialog.component';
 })
 export class DialogService {
   private dialog = inject(MatDialog);
+  openDialog(): Promise<any> {
+    const dialogRef = this.dialog.open(CreatedialogComponent);
 
-  openDialog() {
-    this.dialog.open(CreatedialogComponent);
+    // Rückgabe eines Promises, um die Daten nach `afterClosed()` zu senden
+    return dialogRef.afterClosed().toPromise();
   }
-  constructor() { }
 }

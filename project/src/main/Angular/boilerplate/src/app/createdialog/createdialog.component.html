@@ -3,33 +3,38 @@
   <p>
     <mat-form-field appearance="outline">
       <mat-label>Vorname</mat-label>
-      <input matInput placeholder="Placeholder">
+      <input matInput placeholder="Placeholder" [(ngModel)]="customerdata.firstName">
     </mat-form-field>
   </p>
   <p>
     <mat-form-field appearance="outline">
       <mat-label>Nachname</mat-label>
-      <input matInput placeholder="Placeholder">
+      <input matInput placeholder="Placeholder" [(ngModel)]="customerdata.lastName">
     </mat-form-field>
   </p>
   <p>
     <mat-form-field>
       <mat-label>Geschlecht</mat-label>
-      <mat-select>
-        <mat-option value="option1">M</mat-option>
-        <mat-option value="option2">W</mat-option>
-        <mat-option value="option3">D</mat-option>
+      <mat-select [(ngModel)]="customerdata.gender">
+        <mat-option value="M">M</mat-option>
+        <mat-option value="W">W</mat-option>
+        <mat-option value="D">D</mat-option>
+        <mat-option value="U">U</mat-option>
       </mat-select>
     </mat-form-field>
   </p>
   <p>
-    <mat-form-field appearance="outline">
-      <mat-label>Geburtsdatum</mat-label>
-      <input matInput placeholder="Placeholder">
+    <mat-form-field>
+      <mat-label>Choose a date</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="customerdata.birthDate">
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
   </p>
+  <p *ngIf="errorMessage" style="color: red;">{{ errorMessage }}</p>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close>Create</button>
+  <button mat-button  (click)="createuser()">Create</button>
   <button mat-button mat-dialog-close cdkFocusInitial>Schließen</button>
 </mat-dialog-actions>
