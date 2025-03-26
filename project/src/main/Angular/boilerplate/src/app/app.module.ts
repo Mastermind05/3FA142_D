@@ -7,6 +7,7 @@ import { StartseiteModule } from './home/home.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { LoginComponent } from './login/login/login.component';
 import { UpdatedialogComponent } from './updatedialog/updatedialog.component';
+import { ReadingComponent } from './reading/reading/reading.component';
 
 
 
@@ -14,6 +15,7 @@ import { UpdatedialogComponent } from './updatedialog/updatedialog.component';
   declarations: [
     AppComponent,
     LoginComponent,
+    ReadingComponent
   ],
   imports: [
     BrowserModule,

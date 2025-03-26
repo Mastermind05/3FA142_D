@@ -2,16 +2,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ReadingRoutingModule } from './reading-routing.module';
-import { ReadingComponent } from './reading/reading.component';
+import { SharedModule } from '../shared/shared.module';
+import { MainComponent } from '../main/main/main.component';
 
 
 @NgModule({
   declarations: [
-    ReadingComponent
   ],
   imports: [
     CommonModule,
-    ReadingRoutingModule
+    ReadingRoutingModule,
+    SharedModule,
+    MainComponent
   ]
 })
 export class ReadingModule { }
