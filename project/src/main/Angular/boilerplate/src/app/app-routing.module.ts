@@ -10,6 +10,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: '', component: HomeComponent, canActivate: [authGuard] },  // Home nur mit AuthGuard zugänglich
   { path: 'reading', component: ReadingComponent, canActivate: [authGuard] }, // Reading nur mit AuthGuard zugänglich
+  { path: 'reading/:id', component: ReadingComponent },
   { path: '**', redirectTo: '/login' },  // Unbekannte Routen führen zum Login  
 ];
 

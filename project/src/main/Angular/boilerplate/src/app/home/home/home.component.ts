@@ -118,8 +118,8 @@ export class HomeComponent {
       console.error('Fehler beim Öffnen des Dialogs:', error);
     }
   }
-  goToReading() {
+  goToReading(id: string) {
     console.log('Session Storage:', sessionStorage.getItem('isAuthenticated'));
-    this.router.navigate(['/reading']);
-  }
+    this.router.navigate(['/reading', id]);
+}
 }

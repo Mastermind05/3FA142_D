@@ -15,14 +15,13 @@ public class Reading implements IReading{
 	
 	private UUID id;
 	private String comment;
-    private ICustomer customer;
+    private Customer customer;
     private LocalDate dateOfReading;
     private KindOfMeter kindOfMeter;
     private double meterCount;
     private String meterId;
     private boolean substitute;
-    private UUID customerId;
-
+    
     @JsonCreator
     public Reading(
         @JsonProperty("id") UUID id,
@@ -51,7 +50,7 @@ public class Reading implements IReading{
 	}
 
 	@Override
-	public void setCustomer(ICustomer customer) {
+	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
 
@@ -86,7 +85,7 @@ public class Reading implements IReading{
 	}
 
 	@Override
-	public ICustomer getCustomer() {
+	public Customer getCustomer() {
 		return customer;
 	}
 
