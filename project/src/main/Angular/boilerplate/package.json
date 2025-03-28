@@ -20,13 +20,9 @@
     "@angular/platform-browser": "^19.1.0",
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
-    "@primeng/themes": "^19.0.10",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
-    "file-saver": "^2.0.5",
     "ng2-charts": "^8.0.0",
-    "papaparse": "^5.5.2",
-    "primeng": "^19.0.10",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

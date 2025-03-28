@@ -14,7 +14,6 @@ import org.itp.dto.Reading;
 import org.itp.enums.KindOfMeter;
 import org.itp.enums.Tables;
 import org.itp.utils.UUIDUtils;
-import org.mindrot.jbcrypt.BCrypt;
 
 import jakarta.annotation.Nullable;
 
@@ -188,39 +187,6 @@ public void updateReading(Reading reading) {
             return ObjectMapper.getReadings(rs, this);
         }
     }
-    
- // Methode zum Erstellen eines Benutzers mit gehashtem Passwort
-    public boolean createCredentials(String username, String password) throws SQLException {
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12)); // Passwort sicher hashen
-        String query = "INSERT INTO " + Tables.AUTHENTIFICATION + " (username, password) VALUES (?, ?)";
 
-        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query)) {
-            stmt.setString(1, username);
-            stmt.setString(2, hashedPassword);
-
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected == 0) {
-            	System.out.println("Fehler beim Erstellen der Anmeldeinformationen.");
-            	return false;
-            }
-        }
-		return true;
-    }
-
-    // Methode zur Authentifizierung des Benutzers mit gehashtem Passwort
-    public boolean authenticateUser(String username, String password) throws SQLException {
-        String query = "SELECT password FROM " + Tables.AUTHENTIFICATION + " WHERE username = ?";
-
-        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(query)) {
-            stmt.setString(1, username);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    String storedHash = rs.getString("password");
-                    return BCrypt.checkpw(password, storedHash); // Vergleicht das eingegebene Passwort mit dem Hash
-                }
-            }
-        }
-        return false; // Benutzername nicht gefunden oder falsches Passwort
-    }
 
 }

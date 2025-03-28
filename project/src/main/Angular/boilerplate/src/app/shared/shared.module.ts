@@ -12,12 +12,6 @@ import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatTableModule} from '@angular/material/table';
 import {MAT_DIALOG_DATA,MatDialog,MatDialogActions,MatDialogClose,MatDialogContent,MatDialogRef,MatDialogTitle,} from '@angular/material/dialog';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatDividerModule} from '@angular/material/divider';
-import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {MatSelectModule} from '@angular/material/select';
-
-
-
 
 
 
@@ -41,8 +35,6 @@ import {MatSelectModule} from '@angular/material/select';
     MatDialogActions,
     MatDialogClose,
     MatCheckboxModule,
-    MatDividerModule,
-    MatSelectModule
   ],
   exports: [
     MatToolbarModule,
@@ -59,9 +51,7 @@ import {MatSelectModule} from '@angular/material/select';
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
-    MatCheckboxModule,
-    MatDividerModule,
-    MatSelectModule
+    MatCheckboxModule
   ],
   providers: [provideNativeDateAdapter()],
 })
