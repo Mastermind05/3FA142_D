@@ -1,28 +1,20 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { DialogService } from '../../services/dialog.service';
 import axios from 'axios';
+import { MatDialog } from '@angular/material/dialog';
+import { UpdatedialogComponent } from '../../updatedialog/updatedialog.component';
+import { Router } from '@angular/router';
+import { SettingdialogComponent } from '../../settingdialog/settingdialog.component';
 
-
-export interface PeriodicElement {
-  position: number;
-  dateOfReading: string;
-  kindOfMeter: string;
-  meterCount: string;
-  meterId: string;
-  substitute: string;
-}
-
-export interface Customer {
-  id: number;
+export interface Person {
+  id: string;
   firstName: string;
   lastName: string;
-  birthdate: string;
+  birthDate: string;
   gender: string;
 }
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, dateOfReading: 'test', kindOfMeter: 'test', meterCount: 'test', meterId: 'test', substitute: 'test'},
-];
+const baseurl = 'http://localhost:8080/test/ressources/customers';
 
 @Component({
   selector: 'app-home',
@@ -30,27 +22,110 @@ const ELEMENT_DATA: PeriodicElement[] = [
   standalone: false,
   styleUrl: './home.component.scss',
 })
-
-
-
 export class HomeComponent {
-  displayedColumns: string[] = ['position', 'dateofreading', 'kindofmeter', 'metercount', 'meterid', 'substitute'];
-  dataSource = ELEMENT_DATA;
-  customer: Customer = {
-    id: 0,
-    firstName: '',
-    lastName: '',
-    birthdate: '',
-    gender: ''
-  };
-  addCustomer() {
-    const url = 'http://localhost:8080/test/ressources/customers'; // Ersetzen Sie dies durch Ihre API-URL
-    axios.post<Customer>(url, this.customer)
-      .then(response => {
-        console.log('Customer added successfully', response.data);
-      })
-      .catch(error => {
-        console.error('Error adding customer', error);
-      });
+  constructor(private dialogService: DialogService, public dialog: MatDialog, private router: Router) {}
+  displayedColumns: string[] = ['id', 'firstName', 'lastName', 'birthDate', 'gender', 'actions'];
+  dataSource: Person[] = []; // Startet als leeres Array
+
+  ngOnInit() {
+    this.getAllCustomers(); // ⏳ Lädt die Kunden beim Seitenstart
   }
+
+  async getAllCustomers() {
+    try {
+      const response = await axios.get<Person[]>(baseurl);
+      this.dataSource = response.data; // 🔄 Tabelle mit Server-Daten aktualisieren
+      console.log('📥 Kunden erfolgreich geladen:', this.dataSource);
+    } catch (error) {
+      console.error('❌ Fehler beim Abrufen der Kunden:', error);
+    }
+  }
+  
+  editingUser: any = null;
+
+  // Bearbeiten-Methoden
+  editUser(user: any) {
+    this.editingUser = { ...user }; // Kopiere die Daten, um sie zu bearbeiten
+  }
+
+  cancelEdit() {
+    this.editingUser = null; // Setze die Bearbeitung zurück
+  }
+
+  openEditDialog(user: any): void {
+    const dialogRef = this.dialog.open(UpdatedialogComponent, {
+      width: '400px',
+      data: { ...user } // Kopiere die Benutzerdaten in den Dialog
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.updateUser(result); // Wenn Daten zurückgegeben wurden, die Benutzerinformationen aktualisieren
+      }
+    });
+  }
+  openSettingDialog(): void {
+    const dialogRef = this.dialog.open(SettingdialogComponent, {
+      width: '40%',
+      height: '40%',
+    });
+  }
+  // Update-Methode
+  async updateUser(user: any) {
+    const url = `http://localhost:8080/test/ressources/customers/`;
+
+    try {
+      console.log(user)
+      const response = await axios.put(url, user);
+      console.log('Erfolgreich aktualisiert:', response.data);
+
+      // Nach erfolgreichem Update die Daten in der Tabelle aktualisieren
+      const index = this.dataSource.findIndex(u => u.id === user.id);
+      if (index !== -1) {
+        this.dataSource[index] = { ...user };
+      }
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren:', error);
+    }
+  }
+  
+  async deleteUser(id: string) {
+    const url = `http://localhost:8080/test/ressources/customers/${id}`;
+
+    try {
+      const response = await axios.delete(url);
+      console.log('Erfolgreich gelöscht:', response.data);
+      
+      // Optional: Entferne den gelöschten User aus der Tabelle
+      this.dataSource = this.dataSource.filter(user => user.id !== id);
+    } catch (error) {
+      console.error('Fehler beim Löschen:', error);
+    }
+  }
+
+  async openDialog() {
+    try {
+      const result = await this.dialogService.openDialog();
+      if (result) {
+        console.log('Empfangene Daten aus Dialog:', result);
+
+        try {
+          const response = await axios.post(baseurl, result, {
+            headers: { 'Content-Type': 'application/json' },
+          });
+
+          console.log('✅ Erfolgreich gespeichert:', response.data);
+          this.getAllCustomers(); // ⏳ Nach dem Speichern die Liste neu laden
+        } catch (error) {
+          console.error('❌ Fehler beim Speichern:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Fehler beim Öffnen des Dialogs:', error);
+    }
+  }
+  goToReading(id: string) {
+    console.log('Session Storage:', sessionStorage.getItem('isAuthenticated'));
+    this.router.navigate(['/reading', id]);
+}
 }

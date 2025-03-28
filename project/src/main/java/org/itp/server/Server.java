@@ -4,12 +4,14 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.itp.project.DBConnection;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Properties;
 
 public class Server {
@@ -33,7 +35,33 @@ public class Server {
     }
 
     public static void startServer(String baseUri) throws IOException {
-        // Starte den REST-Server
+        dbConnection = new DBConnection();
+        properties = new Properties();
+
+        // Lade die Verbindung zur Datenbank
+        try {
+            InputStream input = Server.class.getClassLoader().getResourceAsStream("credentials.properties");
+            if (input == null) {
+                throw new IOException("credentials.properties not found");
+            }
+            properties.load(input);
+
+            dbConnection.openConnection(properties);
+            dbConnection.createAllTables();
+            @SuppressWarnings("unused")
+			SQLStatement sqlStatement = new SQLStatement(dbConnection);
+
+            System.out.println("Datenbankverbindung erfolgreich hergestellt und Tabellen erstellt.");
+        } catch (IOException | SQLException e) {
+            System.err.println("Fehler bei der Datenbankverbindung: " + e.getMessage());
+            e.printStackTrace();
+            return; // Server nicht starten, wenn die Datenbankverbindung fehlschlägt
+        }
+
+        // Starte den REST-Server in einem separaten Thread
+        new Thread(() -> {
+        	JavaTimeModule javaTimeModule = new JavaTimeModule();
+            javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer());
             ResourceConfig config = new ResourceConfig().packages("org.itp.rest").register(CorsFilter.class);
             System.out.println("Starting the REST server at " + baseUri);
             server = JdkHttpServerFactory.createHttpServer(URI.create(baseUri), config);
