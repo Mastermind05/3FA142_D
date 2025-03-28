@@ -4,6 +4,7 @@ import axios from 'axios';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdatedialogComponent } from '../../updatedialog/updatedialog.component';
 import { Router } from '@angular/router';
+import { SettingdialogComponent } from '../../settingdialog/settingdialog.component';
 
 export interface Person {
   id: string;
@@ -63,7 +64,12 @@ export class HomeComponent {
       }
     });
   }
-
+  openSettingDialog(): void {
+    const dialogRef = this.dialog.open(SettingdialogComponent, {
+      width: '40%',
+      height: '40%',
+    });
+  }
   // Update-Methode
   async updateUser(user: any) {
     const url = `http://localhost:8080/test/ressources/customers/`;

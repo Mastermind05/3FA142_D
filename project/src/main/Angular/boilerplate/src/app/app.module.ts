@@ -8,6 +8,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { LoginComponent } from './login/login/login.component';
 import { UpdatedialogComponent } from './updatedialog/updatedialog.component';
 import { ReadingComponent } from './reading/reading/reading.component';
+import { SettingdialogComponent } from './settingdialog/settingdialog.component';
 
 
 
@@ -15,7 +16,7 @@ import { ReadingComponent } from './reading/reading/reading.component';
   declarations: [
     AppComponent,
     LoginComponent,
-    ReadingComponent
+    ReadingComponent,
   ],
   imports: [
     BrowserModule,
