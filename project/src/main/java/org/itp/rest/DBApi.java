@@ -11,11 +11,18 @@ import jakarta.ws.rs.core.Response;
 
 @Path ("/setupDB")
 public class DBApi {
-	private DBConnection dbConnection;
+	private final DBConnection dbConnection;
+	public DBApi() {
+        dbConnection = new DBConnection();
+        try {
+            dbConnection.openConnection(new Properties());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	@DELETE
 	public Response delete() {
-		dbConnection = new DBConnection();
 		dbConnection.removeAllTables();
 		dbConnection.createAllTables();
 		return Response.ok().build();

@@ -1,7 +1,6 @@
 package org.itp.rest;
 
 import org.itp.dto.Customer;
-import org.itp.dto.CustomerDto;
 import org.itp.project.DBConnection;
 import org.itp.project.SQLStatement;
 
@@ -57,7 +56,7 @@ public class CustomerApi {
         try {
             Customer customer = sqlStatement.getCustomer(UUID.fromString(uuid));
             if (customer != null) {
-                return Response.ok(new CustomerDto(customer)).build();
+                return Response.ok(customer).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
