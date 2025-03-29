@@ -61,6 +61,7 @@ export class ReadingComponent {
     'meterId',
     'substitute',
     'customer_id',  // Spalte für customer_id
+    'actions'
   ];
 
   // Methode, um mit dem customer-Objekt zu arbeiten
@@ -81,6 +82,20 @@ export class ReadingComponent {
         width: '40%',
         height: '40%',
       });
+  }
+
+  async deleteReading(id: string) {
+    const url = `http://localhost:8080/test/ressources/readings/${id}`;
+
+    try {
+      const response = await axios.delete(url);
+      console.log('Erfolgreich gelöscht:', response.data);
+      
+      // Optional: Entferne den gelöschten User aus der Tabelle
+      this.dataSource = this.dataSource.filter(reading => reading.id !== id);
+    } catch (error) {
+      console.error('Fehler beim Löschen:', error);
+    }
   }
 
   exportAsZip(): void {
@@ -124,4 +139,5 @@ export class ReadingComponent {
       saveAs(content, 'readings.zip');
     });
 }
+
 }
