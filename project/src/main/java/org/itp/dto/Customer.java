@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import org.itp.enums.Gender;
 import org.itp.interfaces.ICustomer;
+import org.itp.server.LocalDateSerializer;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class Customer implements ICustomer{
 
@@ -31,7 +33,7 @@ public class Customer implements ICustomer{
         @JsonProperty("id") UUID id,
         @JsonProperty("firstName") String firstName,
         @JsonProperty("lastName") String lastName,
-        @JsonProperty("birthDate") LocalDate birthDate,
+        @JsonProperty("birthDate") @JsonSerialize(using = LocalDateSerializer.class) LocalDate birthDate,
         @JsonProperty("gender") Gender gender
         
     ) {

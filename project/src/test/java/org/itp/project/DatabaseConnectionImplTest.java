@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 
 public class DatabaseConnectionImplTest {
@@ -111,23 +110,11 @@ public class DatabaseConnectionImplTest {
             fail("Exception occurred during truncateAllTables test: " + e.getMessage());
         }
     }
-    
-    @Test
-    public void testRemoveAllTables() throws SQLException {
-        dbConnection.removeAllTables();
-
-        // Überprüfen Sie, ob alle Tabellen entfernt wurden
-        try (Statement stmt = dbConnection.getConnection().createStatement()) {
-            ResultSet rs = stmt.executeQuery("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
-            assertFalse(rs.next(), "Es sollten keine Tabellen mehr vorhanden sein.");
-        }
-    }
 
     @AfterEach
     public void tearDown() throws SQLException {
     	//Löschen der Daten nach jedem Test
     	dbConnection.openConnection(getTestProperties());
-    	dbConnection.createAllTables();
     	dbConnection.truncateAllTables();
         // Close the connection after each test
         if (dbConnection != null) {

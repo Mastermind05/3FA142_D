@@ -5,12 +5,14 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.itp.project.DBConnection;
 import org.itp.project.SQLStatement;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Properties;
 
 public class Server {
@@ -55,6 +57,8 @@ public class Server {
 
         // Starte den REST-Server in einem separaten Thread
         new Thread(() -> {
+        	JavaTimeModule javaTimeModule = new JavaTimeModule();
+            javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer());
             ResourceConfig config = new ResourceConfig().packages("org.itp.rest").register(CorsFilter.class);
             System.out.println("Starting the REST server at " + baseUri);
             server = JdkHttpServerFactory.createHttpServer(URI.create(baseUri), config);
