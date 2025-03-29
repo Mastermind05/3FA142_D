@@ -8,7 +8,14 @@
       <mat-icon>settings</mat-icon>
     </button>
 </mat-toolbar>
-<br> <br>
+
+<br>
+<div id="readingbuttons">
+  <button mat-button color="accent">Create</button>
+  <button mat-button color="accent">Import</button>
+  <button mat-button color="accent" (click)="exportAsZip()">Export</button>
+</div>
+<br>
 <div class="p-4">
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-full">
 

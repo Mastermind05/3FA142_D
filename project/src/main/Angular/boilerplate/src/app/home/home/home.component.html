@@ -13,7 +13,7 @@
   <div class="table-actions">
     <button mat-button color="primary" (click)="openDialog()">Hinzufügen</button>
     <button mat-button color="accent">Import</button>
-    <button mat-button color="accent">Export</button>
+    <button mat-button color="accent" (click)="exportAsZip()">Export</button>
   </div>
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">

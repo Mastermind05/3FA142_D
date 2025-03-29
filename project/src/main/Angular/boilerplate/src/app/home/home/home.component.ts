@@ -5,6 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UpdatedialogComponent } from '../../updatedialog/updatedialog.component';
 import { Router } from '@angular/router';
 import { SettingdialogComponent } from '../../settingdialog/settingdialog.component';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 export interface Person {
   id: string;
@@ -127,5 +129,44 @@ export class HomeComponent {
   goToReading(id: string) {
     console.log('Session Storage:', sessionStorage.getItem('isAuthenticated'));
     this.router.navigate(['/reading', id]);
+}
+
+
+exportAsZip(): void {
+    if (this.dataSource.length === 0) {
+      console.warn('⚠️ Keine Daten zum Exportieren!');
+      return;
+    }
+  
+    const zip = new JSZip();
+  
+    // JSON-Datei erstellen
+    const jsonContent = JSON.stringify(this.dataSource, null, 2);
+    zip.file('customers.json', jsonContent);
+  
+    // CSV-Datei erstellen
+    const csvHeader = 'id,fistName,lastName,birthDate,gender\n';
+    const csvContent = this.dataSource
+      .map(r => `${r.id},${r.firstName},${r.lastName},${r.birthDate},${r.gender}`)
+      .join('\n');
+    zip.file('readings.csv', csvHeader + csvContent);
+    // XML-Datei erstellen
+    let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<customers>\n';
+    this.dataSource.forEach(r => {
+      xmlContent += `  <customer>\n`;
+      xmlContent += `    <id>${r.id}</id>\n`;
+      xmlContent += `    <firstName>${r.firstName}</firstName>\n`;
+      xmlContent += `    <lastName>${r.lastName}</lastName>\n`;
+      xmlContent += `    <birthDate>${r.birthDate}</birthDate>\n`;
+      xmlContent += `    <gender>${r.gender}</gender>\n`;
+      xmlContent += `  </customer>\n`;
+    });
+    xmlContent += '</customers>';
+    zip.file('customers.xml', xmlContent);
+  
+    // ZIP-Datei generieren und speichern
+    zip.generateAsync({ type: 'blob' }).then(content => {
+      saveAs(content, 'customers.zip');
+    });
 }
 }

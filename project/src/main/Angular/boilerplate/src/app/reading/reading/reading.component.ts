@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import axios from 'axios';
 import { SettingdialogComponent } from '../../settingdialog/settingdialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 export interface Customer {
   id: string;
@@ -79,5 +81,47 @@ export class ReadingComponent {
         width: '40%',
         height: '40%',
       });
+  }
+
+  exportAsZip(): void {
+    if (this.dataSource.length === 0) {
+      console.warn('⚠️ Keine Daten zum Exportieren!');
+      return;
     }
+  
+    const zip = new JSZip();
+  
+    // JSON-Datei erstellen
+    const jsonContent = JSON.stringify(this.dataSource, null, 2);
+    zip.file('readings.json', jsonContent);
+  
+    // CSV-Datei erstellen
+    const csvHeader = 'id,kindOfMeter,dateOfReading,comment,meterCount,meterId,substitute,customer_id\n';
+    const csvContent = this.dataSource
+      .map(r => `${r.id},${r.kindOfMeter},${r.dateOfReading},${r.comment},${r.meterCount},${r.meterId},${r.substitute},${r.customer.id}`)
+      .join('\n');
+    zip.file('readings.csv', csvHeader + csvContent);
+  
+    // XML-Datei erstellen
+    let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<readings>\n';
+    this.dataSource.forEach(r => {
+      xmlContent += `  <reading>\n`;
+      xmlContent += `    <id>${r.id}</id>\n`;
+      xmlContent += `    <kindOfMeter>${r.kindOfMeter}</kindOfMeter>\n`;
+      xmlContent += `    <dateOfReading>${r.dateOfReading}</dateOfReading>\n`;
+      xmlContent += `    <comment>${r.comment}</comment>\n`;
+      xmlContent += `    <meterCount>${r.meterCount}</meterCount>\n`;
+      xmlContent += `    <meterId>${r.meterId}</meterId>\n`;
+      xmlContent += `    <substitute>${r.substitute}</substitute>\n`;
+      xmlContent += `    <customer_id>${r.customer.id}</customer_id>\n`;
+      xmlContent += `  </reading>\n`;
+    });
+    xmlContent += '</readings>';
+    zip.file('readings.xml', xmlContent);
+  
+    // ZIP-Datei generieren und speichern
+    zip.generateAsync({ type: 'blob' }).then(content => {
+      saveAs(content, 'readings.zip');
+    });
+}
 }
