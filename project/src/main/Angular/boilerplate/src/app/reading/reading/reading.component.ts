@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import axios from 'axios';
+import { SettingdialogComponent } from '../../settingdialog/settingdialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface Customer {
   id: string;
@@ -31,7 +33,7 @@ const baseurl = 'http://localhost:8080/test/ressources/readings';
 })
 export class ReadingComponent {
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, public dialog: MatDialog) { }
 
   dataSource: Reading[] = [];
 
@@ -72,4 +74,10 @@ export class ReadingComponent {
       console.error('❌ Fehler beim Abrufen der Ablesedaten:', error);
     }
   }
+  openSettingDialog(): void {
+      const dialogRef = this.dialog.open(SettingdialogComponent, {
+        width: '40%',
+        height: '40%',
+      });
+    }
 }
