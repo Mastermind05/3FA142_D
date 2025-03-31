@@ -16,6 +16,16 @@
   <button mat-button color="accent" (click)="exportAsZip()">Export</button>
 </div>
 <br>
+<div class="search-container">
+  <mat-form-field appearance="outline" class="search-box">
+    <mat-label>Suche</mat-label>
+    <input matInput >
+    <button mat-icon-button matSuffix >
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+<br>
 <div class="p-4">
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-full">
 
