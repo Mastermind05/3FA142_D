@@ -1,4 +1,4 @@
-<mat-toolbar style="margin-right: 16px;">
+<mat-toolbar>
     <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
       <mat-icon>house</mat-icon>
     </button>
@@ -11,7 +11,7 @@
 
 <br>
 <div id="readingbuttons">
-  <button mat-button color="accent">Create</button>
+  <button mat-button color="accent" (click)="openDialog()">Create</button>
   <button mat-button color="accent">Import</button>
   <button mat-button color="accent" (click)="exportAsZip()">Export</button>
 </div>
@@ -20,14 +20,14 @@
   <mat-form-field appearance="outline" class="search-box">
     <mat-label>Suche</mat-label>
     <input matInput >
-    <button mat-icon-button matSuffix >
+    <button mat-icon-button matSuffix>
       <mat-icon>search</mat-icon>
     </button>
   </mat-form-field>
 </div>
 <br>
-<div class="p-4">
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-full">
+<div class="p-4" style="margin-left: 15px; margin-right: 15px;">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-full" style="width: 10%;">
 
     <!-- ID Column -->
     <ng-container matColumnDef="id">

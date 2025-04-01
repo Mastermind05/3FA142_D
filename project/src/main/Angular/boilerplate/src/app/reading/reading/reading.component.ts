@@ -5,6 +5,7 @@ import { SettingdialogComponent } from '../../settingdialog/settingdialog.compon
 import { MatDialog } from '@angular/material/dialog';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { CreatereadingdialogComponent } from '../../createreadingdialog/createreadingdialog.component';
 
 export interface Customer {
   id: string;
@@ -82,6 +83,35 @@ export class ReadingComponent {
         width: '40%',
         height: '40%',
       });
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(CreatereadingdialogComponent, {
+      width: '500px',
+      data: {
+        id: '',
+        kindOfMeter: '',
+        dateOfReading: [],
+        comment: '',
+        meterCount: 0,
+        meterId: '',
+        substitute: false,
+        customer: {
+          id: '',
+          firstName: '',
+          lastName: '',
+          birthDate: '',
+          gender: ''
+        } as Customer
+      } as Reading
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('📄 Neuer Reading-Eintrag:', result);
+        // Hier kannst du die Logik zum Speichern oder Aktualisieren hinzufügen
+      }
+    });
   }
 
   async deleteReading(id: string) {

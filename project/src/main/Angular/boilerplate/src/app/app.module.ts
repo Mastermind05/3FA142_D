@@ -9,6 +9,7 @@ import { LoginComponent } from './login/login/login.component';
 import { UpdatedialogComponent } from './updatedialog/updatedialog.component';
 import { ReadingComponent } from './reading/reading/reading.component';
 import { SettingdialogComponent } from './settingdialog/settingdialog.component';
+import { CreatereadingdialogComponent } from './createreadingdialog/createreadingdialog.component';
 
 
 
@@ -17,6 +18,7 @@ import { SettingdialogComponent } from './settingdialog/settingdialog.component'
     AppComponent,
     LoginComponent,
     ReadingComponent,
+    CreatereadingdialogComponent,
   ],
   imports: [
     BrowserModule,
