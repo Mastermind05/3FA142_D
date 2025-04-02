@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { CreatereadingdialogComponent } from '../../createreadingdialog/createreadingdialog.component';
+import { UpdateReadingDialogComponent } from '../../updatereadingdialog/updatereadingdialog.component';
 
 export interface Customer {
   id: string;
@@ -110,6 +111,20 @@ export class ReadingComponent {
       if (result) {
         console.log('📄 Neuer Reading-Eintrag:', result);
         // Hier kannst du die Logik zum Speichern oder Aktualisieren hinzufügen
+      }
+    });
+  }
+
+  openUpdateDialog(reading: Reading): void {
+    const dialogRef = this.dialog.open(UpdateReadingDialogComponent, {
+      width: '500px',
+      data: { ...reading } // Übergibt das aktuelle Reading zum Bearbeiten
+    });
+  
+    dialogRef.afterClosed().subscribe(updatedReading => {
+      if (updatedReading) {
+        console.log('✅ Reading wurde aktualisiert:', updatedReading);
+        // Hier kannst du die Tabelle oder das UI aktualisieren
       }
     });
   }
