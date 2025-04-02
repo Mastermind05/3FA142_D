@@ -12,8 +12,9 @@
 <br>
 <div id="readingbuttons">
   <button mat-button color="accent" (click)="openDialog()">Create</button>
-  <button mat-button color="accent">Import</button>
-  <button mat-button color="accent" (click)="exportAsZip()">Export</button>
+  <button mat-button color="accent" (click)="fileInput.click()">📂 Import</button>
+  <input type="file" #fileInput (change)="importReadings($event)" accept=".json, .csv, .xml" hidden />
+  <button mat-button color="accent" (click)="exportAsZip()">📂 Export</button>
 </div>
 <br>
 <div class="search-container">

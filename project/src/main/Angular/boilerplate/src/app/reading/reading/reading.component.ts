@@ -7,6 +7,9 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { CreatereadingdialogComponent } from '../../createreadingdialog/createreadingdialog.component';
 import { UpdateReadingDialogComponent } from '../../updatereadingdialog/updatereadingdialog.component';
+import * as Papa from 'papaparse';
+import * as xml2js from 'xml2js';
+
 
 export interface Customer {
   id: string;
@@ -183,6 +186,41 @@ export class ReadingComponent {
     zip.generateAsync({ type: 'blob' }).then(content => {
       saveAs(content, 'readings.zip');
     });
+}
+
+async importReadings(event: any) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = async (e: any) => {
+    const content = e.target.result;
+    let readings: any[] = [];
+    
+    if (file.name.endsWith('.json')) {
+      readings = JSON.parse(content);
+    } else if (file.name.endsWith('.csv')) {
+      readings = Papa.parse(content, { header: true, skipEmptyLines: true }).data;
+    } else if (file.name.endsWith('.xml')) {
+      xml2js.parseString(content, { explicitArray: false }, (err, result) => {
+        if (!err) readings = result.readings.reading;
+      });
+    }
+    
+    for (const reading of readings) {
+      await this.createReading(reading);
+    }
+  };
+  reader.readAsText(file);
+}
+
+async createReading(reading: any) {
+  try {
+    const response = await axios.post('http://localhost:8080/test/ressources/readings', reading);
+    console.log('📤 Reading erfolgreich erstellt:', response);
+  } catch (error) {
+    console.error('❌ Fehler beim Erstellen des Readings:', error);
+  }
 }
 
 }
