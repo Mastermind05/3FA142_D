@@ -7,6 +7,9 @@ import { Router } from '@angular/router';
 import { SettingdialogComponent } from '../../settingdialog/settingdialog.component';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import * as Papa from 'papaparse';
+import * as xml2js from 'xml2js';
+
 
 export interface Person {
   id: string;
@@ -15,6 +18,8 @@ export interface Person {
   birthDate: string;
   gender: string;
 }
+
+
 
 const baseurl = 'http://localhost:8080/test/ressources/customers';
 
@@ -168,5 +173,49 @@ exportAsZip(): void {
     zip.generateAsync({ type: 'blob' }).then(content => {
       saveAs(content, 'customers.zip');
     });
+}
+
+async importCustomers(event: any) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (e: any) => {
+    const content = e.target.result;
+    let customers: any[] = [];
+
+    // Überprüfen der Dateiendung
+    if (file.name.endsWith('.json')) {
+      customers = JSON.parse(content); // JSON parsen
+    } else if (file.name.endsWith('.csv')) {
+      customers = Papa.parse(content, { header: true, skipEmptyLines: true }).data; // CSV parsen
+    } else if (file.name.endsWith('.xml')) {
+      xml2js.parseString(content, { explicitArray: false }, (err, result) => {
+        if (!err) customers = result.customers.customer; // XML parsen
+      });
+    }
+
+    // Für jeden Customer einen POST-Request senden
+    for (const customer of customers) {
+      await this.createCustomer(customer);
+    }
+  };
+  reader.readAsText(file);
+}
+
+async createCustomer(customer: any) {
+  try {
+    const response = await axios.post('http://localhost:8080/test/ressources/customers', customer);
+    console.log('📤 Customer erfolgreich erstellt:', response);
+  } catch (error) {
+    console.error('❌ Fehler beim Erstellen des Customers:', error);
+  }
+}
+openFileInput(): void {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json,.csv,.xml';
+  input.addEventListener('change', (event) => this.importCustomers(event));
+  input.click();
 }
 }
