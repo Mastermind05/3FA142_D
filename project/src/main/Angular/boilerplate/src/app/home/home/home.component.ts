@@ -184,24 +184,32 @@ async importCustomers(event: any) {
     const content = e.target.result;
     let customers: any[] = [];
 
-    // Überprüfen der Dateiendung
     if (file.name.endsWith('.json')) {
-      customers = JSON.parse(content); // JSON parsen
-    } else if (file.name.endsWith('.csv')) {
-      customers = Papa.parse(content, { header: true, skipEmptyLines: true }).data; // CSV parsen
-    } else if (file.name.endsWith('.xml')) {
-      xml2js.parseString(content, { explicitArray: false }, (err, result) => {
-        if (!err) customers = result.customers.customer; // XML parsen
+      const jsonData = JSON.parse(content);
+      customers = Array.isArray(jsonData) ? jsonData : [jsonData]; // Sicherstellen, dass es ein Array ist
+    } 
+    else if (file.name.endsWith('.csv')) {
+      const parsedCSV = Papa.parse(content, { header: true, skipEmptyLines: true }).data;
+      customers = Array.isArray(parsedCSV) ? parsedCSV : [parsedCSV]; // Sicherstellen, dass es ein Array ist
+    } 
+    else if (file.name.endsWith('.xml')) {
+      customers = await new Promise<any[]>((resolve, reject) => {
+        xml2js.parseString(content, { explicitArray: false }, (err, result) => {
+          if (err) return reject(err);
+          let parsedCustomers = result?.customers?.customer || [];
+          resolve(Array.isArray(parsedCustomers) ? parsedCustomers : [parsedCustomers]);
+        });
       });
     }
 
-    // Für jeden Customer einen POST-Request senden
+    // Kunden verarbeiten (jeder Eintrag wird einzeln gesendet)
     for (const customer of customers) {
       await this.createCustomer(customer);
     }
   };
   reader.readAsText(file);
 }
+
 
 async createCustomer(customer: any) {
   try {
