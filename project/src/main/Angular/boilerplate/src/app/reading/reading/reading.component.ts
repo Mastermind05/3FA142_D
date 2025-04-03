@@ -191,28 +191,38 @@ export class ReadingComponent {
 async importReadings(event: any) {
   const file = event.target.files[0];
   if (!file) return;
-  
+
   const reader = new FileReader();
   reader.onload = async (e: any) => {
     const content = e.target.result;
     let readings: any[] = [];
-    
+
     if (file.name.endsWith('.json')) {
-      readings = JSON.parse(content);
-    } else if (file.name.endsWith('.csv')) {
-      readings = Papa.parse(content, { header: true, skipEmptyLines: true }).data;
-    } else if (file.name.endsWith('.xml')) {
-      xml2js.parseString(content, { explicitArray: false }, (err, result) => {
-        if (!err) readings = result.readings.reading;
+      const jsonData = JSON.parse(content);
+      readings = Array.isArray(jsonData) ? jsonData : [jsonData]; // Sicherstellen, dass es ein Array ist
+    } 
+    else if (file.name.endsWith('.csv')) {
+      const parsedCSV = Papa.parse(content, { header: true, skipEmptyLines: true }).data;
+      readings = Array.isArray(parsedCSV) ? parsedCSV : [parsedCSV]; // Sicherstellen, dass es ein Array ist
+    } 
+    else if (file.name.endsWith('.xml')) {
+      readings = await new Promise<any[]>((resolve, reject) => {
+        xml2js.parseString(content, { explicitArray: false }, (err, result) => {
+          if (err) return reject(err);
+          let parsedReadings = result?.readings?.reading || [];
+          resolve(Array.isArray(parsedReadings) ? parsedReadings : [parsedReadings]);
+        });
       });
     }
-    
+
+    // Messwerte verarbeiten (jeder Eintrag wird einzeln gesendet)
     for (const reading of readings) {
       await this.createReading(reading);
     }
   };
   reader.readAsText(file);
 }
+
 
 async createReading(reading: any) {
   try {
