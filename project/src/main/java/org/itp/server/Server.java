@@ -18,13 +18,17 @@ public class Server {
     private static final String BASE_URI = "http://localhost:8080/test/ressources/";
     private static HttpServer server;
     private static DBConnection dbConnection = new DBConnection();
+    private static Properties properties;
 
     public static void main(String[] args) throws SQLException {
         try {
-        	Properties properties = new Properties();
-        	InputStream input = DBConnection.class.getClassLoader().getResourceAsStream("credentials.properties");
+            // Starte die Datenbankverbindung und den Server
+        	InputStream input = Server.class.getClassLoader().getResourceAsStream("credentials.properties");
+            if (input == null) {
+                throw new IOException("credentials.properties not found");
+            }
             properties.load(input);
-        	// Starte die Datenbankverbindung und den Server
+
             dbConnection.openConnection(properties);
             dbConnection.createAllTables();
             startServer(BASE_URI);
@@ -35,37 +39,7 @@ public class Server {
     }
 
     public static void startServer(String baseUri) throws IOException {
-<<<<<<< HEAD
-        dbConnection = new DBConnection();
-        properties = new Properties();
-
-        // Lade die Verbindung zur Datenbank
-        try {
-            InputStream input = Server.class.getClassLoader().getResourceAsStream("credentials.properties");
-            if (input == null) {
-                throw new IOException("credentials.properties not found");
-            }
-            properties.load(input);
-
-            dbConnection.openConnection(properties);
-            dbConnection.createAllTables();
-            @SuppressWarnings("unused")
-			SQLStatement sqlStatement = new SQLStatement(dbConnection);
-
-            System.out.println("Datenbankverbindung erfolgreich hergestellt und Tabellen erstellt.");
-        } catch (IOException | SQLException e) {
-            System.err.println("Fehler bei der Datenbankverbindung: " + e.getMessage());
-            e.printStackTrace();
-            return; // Server nicht starten, wenn die Datenbankverbindung fehlschlägt
-        }
-
-        // Starte den REST-Server in einem separaten Thread
-        new Thread(() -> {
-        	JavaTimeModule javaTimeModule = new JavaTimeModule();
-            javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer());
-=======
         // Starte den REST-Server
->>>>>>> 72d7f09 (#49: Implementierung des Server Tests)
             ResourceConfig config = new ResourceConfig().packages("org.itp.rest").register(CorsFilter.class);
             System.out.println("Starting the REST server at " + baseUri);
             server = JdkHttpServerFactory.createHttpServer(URI.create(baseUri), config);

@@ -72,28 +72,24 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
-<<<<<<< HEAD
 		<dependency>
 			<groupId>org.mindrot</groupId>
 			<artifactId>jbcrypt</artifactId>
 			<version>0.4</version>
+		</dependency>			<!-- Rest-Assured -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>5.3.0</version>
+			<scope>test</scope>
 		</dependency>
-=======
-			<!-- Rest-Assured -->
-			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>rest-assured</artifactId>
-				<version>5.3.0</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- JSON Schema Validator -->
-			<dependency>
-				<groupId>io.rest-assured</groupId>
-				<artifactId>json-schema-validator</artifactId>
-				<version>5.3.0</version>
-				<scope>test</scope>
-			</dependency>
->>>>>>> 71d14ca (Hinzufügen der Reading Schemas und der Dependencies)
+		<!-- JSON Schema Validator -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>5.3.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
