@@ -17,9 +17,7 @@
     <!-- Date of Reading -->
     <mat-form-field appearance="fill">
       <mat-label>Date of Reading</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="dateOfReading" required />
-      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
+      <input matInput formControlName="dateOfReading" required />
     </mat-form-field>
 
     <!-- Kind of Meter -->
