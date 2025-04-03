@@ -42,7 +42,8 @@ import {MatSelectModule} from '@angular/material/select';
     MatDialogClose,
     MatCheckboxModule,
     MatDividerModule,
-    MatSelectModule
+    MatSelectModule,
+    ReactiveFormsModule
   ],
   exports: [
     MatToolbarModule,
@@ -61,7 +62,8 @@ import {MatSelectModule} from '@angular/material/select';
     MatDialogClose,
     MatCheckboxModule,
     MatDividerModule,
-    MatSelectModule
+    MatSelectModule,
+    ReactiveFormsModule
   ],
   providers: [provideNativeDateAdapter()],
 })

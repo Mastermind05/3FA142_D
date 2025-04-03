@@ -12,8 +12,9 @@
 <div class="table-container" id="table1">
   <div class="table-actions">
     <button mat-button color="primary" (click)="openDialog()">Hinzufügen</button>
-    <button mat-button color="accent">Import</button>
-    <button mat-button color="accent">Export</button>
+    <button mat-button (click)="openFileInput()">📂 Import</button>
+    <input type="file" accept=".json,.csv,.xml" (change)="importCustomers($event)" style="display: none;" #fileInput>
+    <button mat-button color="accent" (click)="exportAsZip()">📂 Export</button>
   </div>
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">

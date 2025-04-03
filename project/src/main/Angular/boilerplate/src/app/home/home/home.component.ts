@@ -5,6 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { UpdatedialogComponent } from '../../updatedialog/updatedialog.component';
 import { Router } from '@angular/router';
 import { SettingdialogComponent } from '../../settingdialog/settingdialog.component';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import * as Papa from 'papaparse';
+import * as xml2js from 'xml2js';
+
 
 export interface Person {
   id: string;
@@ -13,6 +18,8 @@ export interface Person {
   birthDate: string;
   gender: string;
 }
+
+
 
 const baseurl = 'http://localhost:8080/test/ressources/customers';
 
@@ -127,5 +134,96 @@ export class HomeComponent {
   goToReading(id: string) {
     console.log('Session Storage:', sessionStorage.getItem('isAuthenticated'));
     this.router.navigate(['/reading', id]);
+}
+
+
+exportAsZip(): void {
+    if (this.dataSource.length === 0) {
+      console.warn('⚠️ Keine Daten zum Exportieren!');
+      return;
+    }
+  
+    const zip = new JSZip();
+  
+    // JSON-Datei erstellen
+    const jsonContent = JSON.stringify(this.dataSource, null, 2);
+    zip.file('customers.json', jsonContent);
+  
+    // CSV-Datei erstellen
+    const csvHeader = 'id,fistName,lastName,birthDate,gender\n';
+    const csvContent = this.dataSource
+      .map(r => `${r.id},${r.firstName},${r.lastName},${r.birthDate},${r.gender}`)
+      .join('\n');
+    zip.file('customers.csv', csvHeader + csvContent);
+    // XML-Datei erstellen
+    let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<customers>\n';
+    this.dataSource.forEach(r => {
+      xmlContent += `  <customer>\n`;
+      xmlContent += `    <id>${r.id}</id>\n`;
+      xmlContent += `    <firstName>${r.firstName}</firstName>\n`;
+      xmlContent += `    <lastName>${r.lastName}</lastName>\n`;
+      xmlContent += `    <birthDate>${r.birthDate}</birthDate>\n`;
+      xmlContent += `    <gender>${r.gender}</gender>\n`;
+      xmlContent += `  </customer>\n`;
+    });
+    xmlContent += '</customers>';
+    zip.file('customers.xml', xmlContent);
+  
+    // ZIP-Datei generieren und speichern
+    zip.generateAsync({ type: 'blob' }).then(content => {
+      saveAs(content, 'customers.zip');
+    });
+}
+
+async importCustomers(event: any) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (e: any) => {
+    const content = e.target.result;
+    let customers: any[] = [];
+
+    if (file.name.endsWith('.json')) {
+      const jsonData = JSON.parse(content);
+      customers = Array.isArray(jsonData) ? jsonData : [jsonData]; // Sicherstellen, dass es ein Array ist
+    } 
+    else if (file.name.endsWith('.csv')) {
+      const parsedCSV = Papa.parse(content, { header: true, skipEmptyLines: true }).data;
+      customers = Array.isArray(parsedCSV) ? parsedCSV : [parsedCSV]; // Sicherstellen, dass es ein Array ist
+    } 
+    else if (file.name.endsWith('.xml')) {
+      customers = await new Promise<any[]>((resolve, reject) => {
+        xml2js.parseString(content, { explicitArray: false }, (err, result) => {
+          if (err) return reject(err);
+          let parsedCustomers = result?.customers?.customer || [];
+          resolve(Array.isArray(parsedCustomers) ? parsedCustomers : [parsedCustomers]);
+        });
+      });
+    }
+
+    // Kunden verarbeiten (jeder Eintrag wird einzeln gesendet)
+    for (const customer of customers) {
+      await this.createCustomer(customer);
+    }
+  };
+  reader.readAsText(file);
+}
+
+
+async createCustomer(customer: any) {
+  try {
+    const response = await axios.post('http://localhost:8080/test/ressources/customers', customer);
+    console.log('📤 Customer erfolgreich erstellt:', response);
+  } catch (error) {
+    console.error('❌ Fehler beim Erstellen des Customers:', error);
+  }
+}
+openFileInput(): void {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json,.csv,.xml';
+  input.addEventListener('change', (event) => this.importCustomers(event));
+  input.click();
 }
 }

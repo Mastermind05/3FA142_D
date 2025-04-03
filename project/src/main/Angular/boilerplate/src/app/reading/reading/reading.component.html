@@ -1,16 +1,34 @@
-<mat-toolbar style="margin-right: 16px;">
+<mat-toolbar>
     <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
       <mat-icon>house</mat-icon>
     </button>
     <span>Housemanagement</span>
     <span class="example-spacer"></span>
-    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="openSettingDialog()">
       <mat-icon>settings</mat-icon>
     </button>
 </mat-toolbar>
-<br> <br>
-<div class="p-4">
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-full">
+
+<br>
+<div id="readingbuttons">
+  <button mat-button color="accent" (click)="openDialog()">Hinzufügen</button>
+  <button mat-button color="accent" (click)="fileInput.click()">📂 Import</button>
+  <input type="file" #fileInput (change)="importReadings($event)" accept=".json, .csv, .xml" hidden />
+  <button mat-button color="accent" (click)="exportAsZip()">📂 Export</button>
+</div>
+<br>
+<div class="search-container">
+  <mat-form-field appearance="outline" class="search-box">
+    <mat-label>Suche</mat-label>
+    <input matInput >
+    <button mat-icon-button matSuffix>
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+<br>
+<div class="p-4" style="margin-left: 15px; margin-right: 15px;">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-full" style="width: 10%;">
 
     <!-- ID Column -->
     <ng-container matColumnDef="id">
@@ -58,6 +76,18 @@
     <ng-container matColumnDef="customer_id">
       <th mat-header-cell *matHeaderCellDef> Kunden-ID </th>
       <td mat-cell *matCellDef="let element"> {{element.customer.id}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Aktionen </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-icon-button color="primary" (click)="openUpdateDialog(element)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteReading(element.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

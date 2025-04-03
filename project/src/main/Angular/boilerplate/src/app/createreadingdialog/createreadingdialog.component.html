@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>Reading erstellen</h2>
+<mat-dialog-content id="dialog">
+  <form [formGroup]="readingForm">
+    
+    <!-- ID (nicht editierbar) -->
+    <mat-form-field appearance="fill">
+      <mat-label>ID</mat-label>
+      <input matInput formControlName="id"  />
+    </mat-form-field>
+
+    <!-- Comment -->
+    <mat-form-field appearance="fill">
+      <mat-label>Comment</mat-label>
+      <textarea matInput formControlName="comment"></textarea>
+    </mat-form-field>
+
+    <!-- Date of Reading -->
+    <mat-form-field appearance="fill">
+      <mat-label>Date of Reading</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="dateOfReading" required />
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Kind of Meter -->
+    <mat-form-field appearance="fill">
+      <mat-label>Kind of Meter</mat-label>
+      <input matInput formControlName="kindOfMeter" required />
+    </mat-form-field>
+
+    <!-- Meter Count -->
+    <mat-form-field appearance="fill">
+      <mat-label>Meter Count</mat-label>
+      <input matInput type="number" formControlName="meterCount" required />
+    </mat-form-field>
+
+    <!-- Meter ID -->
+    <mat-form-field appearance="fill">
+      <mat-label>Meter ID</mat-label>
+      <input matInput formControlName="meterId" required />
+    </mat-form-field>
+
+    <!-- Customer Auswahl (Dropdown) -->
+    <mat-form-field appearance="fill">
+      <mat-label>Customer</mat-label>
+      <mat-select formControlName="customer" required>
+        <mat-option *ngFor="let customer of customers" [value]="customer.id">
+          {{ customer.firstName }} {{ customer.lastName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Substitute (Checkbox) -->
+    <mat-checkbox formControlName="substitute">Substitute</mat-checkbox>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Abbrechen</button>
+  <button mat-button color="primary" (click)="onSave()" [disabled]="readingForm.invalid">Speichern</button>
+</mat-dialog-actions>
