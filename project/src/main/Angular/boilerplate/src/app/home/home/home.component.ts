@@ -154,7 +154,7 @@ exportAsZip(): void {
     const csvContent = this.dataSource
       .map(r => `${r.id},${r.firstName},${r.lastName},${r.birthDate},${r.gender}`)
       .join('\n');
-    zip.file('readings.csv', csvHeader + csvContent);
+    zip.file('customers.csv', csvHeader + csvContent);
     // XML-Datei erstellen
     let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<customers>\n';
     this.dataSource.forEach(r => {

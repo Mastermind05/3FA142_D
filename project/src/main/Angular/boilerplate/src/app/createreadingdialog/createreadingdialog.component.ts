@@ -49,16 +49,45 @@ export class CreatereadingdialogComponent {
     }
   }
 
-  onSave(): void {
+  async onSave(): Promise<void> {
     if (this.readingForm.valid) {
-      const updatedReading: Reading = {
+      const newReading: Reading = {
         ...this.data,
         ...this.readingForm.value,
+        dateOfReading: this.formatDate(this.readingForm.value.dateOfReading),
         customer: this.customers.find(c => c.id === this.readingForm.value.customer) || this.data.customer
       };
-      this.dialogRef.close(updatedReading);
+  
+      try {
+        const response = await axios.post('http://localhost:8080/test/ressources/readings', newReading);
+        console.log('📤 Reading erfolgreich erstellt:', response);
+        this.dialogRef.close(newReading);
+      } catch (error) {
+        console.error('❌ Fehler beim Erstellen des Readings:', error);
+      }
     }
   }
+  
+  
+  async createReading(reading: any) {
+    try {
+      reading.dateOfReading = reading.dateOfReading.map(this.formatDate);
+      const response = await axios.post(baseurl, reading);
+      console.log('📤 Reading erfolgreich erstellt:', response);
+    } catch (error) {
+      console.error('❌ Fehler beim Erstellen des Readings:', error);
+    }
+  }
+
+  formatDate(date: any): string {
+    if (!date) return '';
+    const newDate = new Date(date);
+    const day = String(newDate.getDate()).padStart(2, '0');
+    const month = String(newDate.getMonth() + 1).padStart(2, '0');
+    const year = newDate.getFullYear();
+    return `${year}-${month}-${day}`;
+  }
+  
 
   onCancel(): void {
     this.dialogRef.close();

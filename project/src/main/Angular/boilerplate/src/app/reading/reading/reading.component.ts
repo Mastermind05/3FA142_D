@@ -22,12 +22,12 @@ export interface Customer {
 export interface Reading {
   id: string;
   kindOfMeter: string;
-  dateOfReading: Date[];
+  dateOfReading: [];
   comment: string;
   meterCount: number;
   meterId: string;
   substitute: boolean;
-  customer: Customer;  // customer ist jetzt ein Objekt
+  customer: Customer;  
 }
 
 const baseurl = 'http://localhost:8080/test/ressources/readings';
@@ -216,11 +216,21 @@ async importReadings(event: any) {
 
 async createReading(reading: any) {
   try {
-    const response = await axios.post('http://localhost:8080/test/ressources/readings', reading);
+    reading.dateOfReading = reading.dateOfReading.map(this.formatDate);
+    const response = await axios.post(baseurl, reading);
     console.log('📤 Reading erfolgreich erstellt:', response);
   } catch (error) {
     console.error('❌ Fehler beim Erstellen des Readings:', error);
   }
+}
+
+formatDate(date: any): string {
+  if (!date) return '';
+  const newDate = new Date(date);
+  const day = String(newDate.getDate()).padStart(2, '0');
+  const month = String(newDate.getMonth() + 1).padStart(2, '0');
+  const year = newDate.getFullYear();
+  return `${year}-${month}-${day}`;
 }
 
 }
