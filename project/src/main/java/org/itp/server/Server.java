@@ -4,14 +4,12 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.itp.project.DBConnection;
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.Properties;
 
 public class Server {
@@ -27,6 +25,7 @@ public class Server {
             if (input == null) {
                 throw new IOException("credentials.properties not found");
             }
+            properties = new Properties();  
             properties.load(input);
 
             dbConnection.openConnection(properties);
