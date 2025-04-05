@@ -83,7 +83,6 @@ public class DBConnection implements IDatabaseConnection {
                 "customer_id BINARY(16), " +
                 "CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES " + Tables.CUSTOMERS + "(id) ON DELETE SET NULL" +
                 ");";
-        String dropAuth = "DROP TABLE " + Tables.AUTHENTIFICATION;
         
         String createAuthTable = "CREATE TABLE IF NOT EXISTS " + Tables.AUTHENTIFICATION + " ("
         	   + "id INT AUTO_INCREMENT PRIMARY KEY,"

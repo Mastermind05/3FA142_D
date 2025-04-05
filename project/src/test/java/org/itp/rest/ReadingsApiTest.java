@@ -1,14 +1,13 @@
 package org.itp.rest;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
-import static io.restassured.RestAssured.*;
-import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
-import static org.hamcrest.Matchers.*;
 
 import org.itp.dto.Customer;
 import org.itp.dto.Reading;
@@ -17,9 +16,9 @@ import org.itp.enums.KindOfMeter;
 import org.itp.project.DBConnection;
 import org.itp.server.Server;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import io.restassured.RestAssured;
@@ -67,6 +66,7 @@ public class ReadingsApiTest {
     
 
     @Test
+    @DisplayName(value = "testGetReadingById_NotFound")
     public void testGetReadingById_NotFound() {
         String fakeId = UUID.randomUUID().toString();
         given()
@@ -78,9 +78,23 @@ public class ReadingsApiTest {
     }
 
     @Test
+    @DisplayName("testCreateReading")
     public void testCreateReading() {
-        UUID customerId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-        Customer customer = new Customer(customerId, "John", "Doe", LocalDate.of(1990, 5, 15), Gender.M);
+        // 1. Customer vorbereiten
+        Customer customer = new Customer("John", "Doe", Gender.M, LocalDate.of(1990, 5, 15));
+
+        // 2. Customer anlegen und mit ID zurückbekommen
+        Customer createdCustomer = given()
+                .contentType(ContentType.JSON)
+                .body(customer)
+                .when()
+                .post("/customers")
+                .then()
+                .statusCode(201)
+                .extract()
+                .as(Customer.class);
+
+        // 3. Reading mit dem erstellten Customer anlegen
         Reading reading = new Reading(
                 UUID.fromString("550e8400-e29b-41d4-a716-446655440000"),
                 KindOfMeter.STROM,
@@ -89,9 +103,10 @@ public class ReadingsApiTest {
                 12345.67,
                 "MTR-001",
                 false,
-                customer
+                createdCustomer // <-- Der Customer mit gültiger ID
         );
 
+        // 4. Reading speichern
         given()
                 .contentType(ContentType.JSON)
                 .body(reading)
@@ -101,6 +116,7 @@ public class ReadingsApiTest {
                 .statusCode(201)
                 .body(equalTo("Reading created successfully"));
     }
+
     
 /*    @Test
     public void testGetReadingById() {
@@ -114,6 +130,7 @@ public class ReadingsApiTest {
     }*/
 
     @Test
+    @DisplayName(value = "testUpdateReading")
     public void testUpdateReading() {
         Customer customer = new Customer("Jane", "Doe", Gender.W, LocalDate.of(1985, 7, 20));
         UUID readingId = UUID.randomUUID();
@@ -139,6 +156,7 @@ public class ReadingsApiTest {
     } 
 
     @Test
+    @DisplayName(value = "testDeleteReading")
     public void testDeleteReading() {
         UUID readingId = UUID.randomUUID();
 
