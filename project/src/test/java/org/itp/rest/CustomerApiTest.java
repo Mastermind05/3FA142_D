@@ -43,10 +43,9 @@ public class CustomerApiTest {
     	 dbConnection = new DBConnection();
     	    properties = new Properties();
     	    try {
-    	        properties.load(getClass().getClassLoader().getResourceAsStream("credentials.properties"));
     	        System.out.println(properties);
     	        dbConnection.openConnection(properties);
-    	    } catch (SQLException | IOException e) {
+    	    } catch (SQLException e) {
     	        e.printStackTrace();
     	    }
     }
@@ -55,12 +54,11 @@ public class CustomerApiTest {
     public void tearDown() throws SQLException {
     	//Löschen der Daten nach jedem Test
     	try {
-	        properties.load(getClass().getClassLoader().getResourceAsStream("credentials.properties"));
 	        System.out.println(properties);
 	        dbConnection.openConnection(properties);
 	    	dbConnection.createAllTables();
 	    	dbConnection.truncateAllTables();
-	    } catch (SQLException | IOException e) {
+	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
         // Close the connection after each test
