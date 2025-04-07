@@ -40,8 +40,10 @@ public class ReadingsApiTest {
     	 dbConnection = new DBConnection();
     	    properties = new Properties();
     	    try {
+    	        properties.load(getClass().getClassLoader().getResourceAsStream("credentials.properties"));
+    	        System.out.println(properties);
     	        dbConnection.openConnection(properties);
-    	    } catch (SQLException e) {
+    	    } catch (SQLException | IOException e) {
     	        e.printStackTrace();
     	    }
     }

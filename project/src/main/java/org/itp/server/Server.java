@@ -20,7 +20,14 @@ public class Server {
 
     public static void main(String[] args) throws SQLException {
         try {
+            // Starte die Datenbankverbindung und den Server
+        	InputStream input = Server.class.getClassLoader().getResourceAsStream("credentials.properties");
+            if (input == null) {
+                throw new IOException("credentials.properties not found");
+            }
             properties = new Properties();  
+            properties.load(input);
+
             dbConnection.openConnection(properties);
             dbConnection.createAllTables();
             startServer(BASE_URI);
