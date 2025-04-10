@@ -3,6 +3,7 @@ package org.itp.project;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ public class DatabaseConnectionImplTest {
 	private Properties properties;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
         dbConnection = new DBConnection();
         properties = new Properties();
         try {
@@ -26,14 +27,33 @@ public class DatabaseConnectionImplTest {
 		}
     }
     
-    private Properties getTestProperties() {
-        Properties properties = new Properties();
-        properties.setProperty("testuser.db.url", "jdbc:mariadb://localhost:3306/test");
-        properties.setProperty("testuser.db.user", "root");
-        properties.setProperty("testuser.db.pw", "password");
+    private Properties getTestProperties() throws IOException {
+        // Setze den "user.name" direkt auf "testuser", BEVOR du auf die Properties zugreifst
         System.setProperty("user.name", "testuser");
+
+        Properties properties = new Properties();
+        var inputStream = getClass().getClassLoader().getResourceAsStream("credentials.properties");
+
+        if (inputStream == null) {
+            throw new IOException("credentials.properties not found in classpath!");
+        }
+
+        properties.load(inputStream);
+
+        // Verwende jetzt den vorher gesetzten user.name = "testuser"
+        String systemUser = System.getProperty("user.name");
+
+        String url = properties.getProperty(systemUser + ".db.url");
+        String user = properties.getProperty(systemUser + ".db.user");
+        String password = properties.getProperty(systemUser + ".db.pw");
+
+        if (url == null || user == null || password == null) {
+            throw new IOException("Missing required DB properties for user: " + systemUser);
+        }
+
         return properties;
     }
+
 
     @Test
     public void testOpenConnection() {
@@ -113,7 +133,7 @@ public class DatabaseConnectionImplTest {
     }
 
     @AfterEach
-    public void tearDown() throws SQLException {
+    public void tearDown() throws SQLException, IOException {
     	//Löschen der Daten nach jedem Test
     	dbConnection.openConnection(getTestProperties());
     	dbConnection.truncateAllTables();

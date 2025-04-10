@@ -31,7 +31,7 @@ public class SQLStatementTest {
         // Initialisiere sqlStatement mit der geöffneten dbConnection
         sqlStatement = new SQLStatement(dbConnection);
         try {
-			dbConnection.openConnection(getTestProperties());
+			dbConnection.openConnection(properties);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,15 +55,6 @@ public class SQLStatementTest {
                 false,
                 testCustomer
         );
-    }
-    
-    private Properties getTestProperties() {
-        Properties properties = new Properties();
-        properties.setProperty("testuser.db.url", "jdbc:mariadb://localhost:3306/test");
-        properties.setProperty("testuser.db.user", "root");
-        properties.setProperty("testuser.db.pw", "password");
-        System.setProperty("user.name", "testuser");
-        return properties;
     }
     
     @Test
@@ -333,7 +324,7 @@ public class SQLStatementTest {
     @AfterEach
     public void tearDown(TestInfo testInfo) throws SQLException {
     	//Löschen der Daten nach jedem Test
-    	dbConnection.openConnection(getTestProperties());
+    	dbConnection.openConnection(properties);
     	dbConnection.truncateAllTables();
         // Close the connection after each test
         if (dbConnection != null) {

@@ -27,7 +27,7 @@ public class Server {
             }
             properties = new Properties();  
             properties.load(input);
-
+            System.out.println(properties);
             dbConnection.openConnection(properties);
             dbConnection.createAllTables();
             startServer(BASE_URI);
