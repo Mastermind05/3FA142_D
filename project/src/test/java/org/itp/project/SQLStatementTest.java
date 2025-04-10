@@ -9,6 +9,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,13 +27,13 @@ public class SQLStatementTest {
     private Reading testReading;
     UUID customerUUID = UUID.fromString("f8a1a58c-91d9-4f39-b432-8e5a58f8c73d");
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
         dbConnection = new DBConnection();
         properties = new Properties();
         // Initialisiere sqlStatement mit der geöffneten dbConnection
         sqlStatement = new SQLStatement(dbConnection);
         try {
-			dbConnection.openConnection(properties);
+			dbConnection.openConnection(getTestProperties());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -56,6 +58,27 @@ public class SQLStatementTest {
                 testCustomer
         );
     }
+    
+    private Properties getTestProperties() throws IOException {
+        // Setze den "user.name" direkt auf "testuser", BEVOR du auf die Properties zugreifst
+        System.setProperty("user.name", "testuser");
+
+        Properties properties = new Properties();
+        var inputStream = getClass().getClassLoader().getResourceAsStream("credentials.properties");
+        
+
+        properties.load(inputStream);
+
+        // Verwende jetzt den vorher gesetzten user.name = "testuser"
+        String systemUser = System.getProperty("user.name");
+
+        String url = properties.getProperty(systemUser + ".db.url");
+        String user = properties.getProperty(systemUser + ".db.user");
+        String password = properties.getProperty(systemUser + ".db.pw");
+
+
+        return properties;
+    }	
     
     @Test
     @DisplayName(value = "testCreateReading")
@@ -322,9 +345,9 @@ public class SQLStatementTest {
 
 
     @AfterEach
-    public void tearDown(TestInfo testInfo) throws SQLException {
+    public void tearDown(TestInfo testInfo) throws SQLException, IOException {
     	//Löschen der Daten nach jedem Test
-    	dbConnection.openConnection(properties);
+    	dbConnection.openConnection(getTestProperties());
     	dbConnection.truncateAllTables();
         // Close the connection after each test
         if (dbConnection != null) {

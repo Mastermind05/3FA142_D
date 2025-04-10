@@ -41,23 +41,28 @@ public class CustomerApiTest {
     @BeforeEach
     public void setup() throws IOException {
     	 dbConnection = new DBConnection();
-    	    properties = new Properties();
     	    try {
-    	        properties.load(getClass().getClassLoader().getResourceAsStream("credentials.properties"));
-    	        System.out.println(properties);
-    	        dbConnection.openConnection(properties);
+    	        dbConnection.openConnection(getTestProperties());
     	    } catch (SQLException | IOException e) {
     	        e.printStackTrace();
     	    }
     }
     
+    private Properties getTestProperties() throws IOException {
+        // Setze den "user.name" direkt auf "testuser", BEVOR du auf die Properties zugreifst
+        System.setProperty("user.name", "testuser");
+
+        Properties properties = new Properties();
+        var inputStream = getClass().getClassLoader().getResourceAsStream("credentials.properties");
+        properties.load(inputStream);
+        return properties;
+    }	
+    
     @AfterEach
     public void tearDown() throws SQLException {
     	//Löschen der Daten nach jedem Test
     	try {
-	        properties.load(getClass().getClassLoader().getResourceAsStream("credentials.properties"));
-	        System.out.println(properties);
-	        dbConnection.openConnection(properties);
+	        dbConnection.openConnection(getTestProperties());
 	    	dbConnection.createAllTables();
 	    	dbConnection.truncateAllTables();
 	    } catch (SQLException | IOException e) {
@@ -154,4 +159,25 @@ public class CustomerApiTest {
             .statusCode(200)
             .body(equalTo("Customer deleted successfully"));
     } 
+    
+    @Test
+    public void failtestGetCustomerById() {
+        when()
+            .get("customers/" + UUID.randomUUID())
+        .then()
+            .statusCode(404)
+            .assertThat()
+            ;
+    }
+    
+    @Test
+    public void failtestDeleteCustomer() {
+
+        when()
+            .delete("customers/" + UUID.randomUUID())
+        .then()
+            .statusCode(404)
+            .body(equalTo("Customer not found"));
+    } 
+    
 }

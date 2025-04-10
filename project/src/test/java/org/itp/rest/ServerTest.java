@@ -4,14 +4,9 @@ import org.itp.server.Server;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
-import java.util.Properties;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class) // Sorgt für eine definierte Reihenfolge der Tests
 class ServerTest {
-
-   
 
     @Test
     void testServerIsRunning() {

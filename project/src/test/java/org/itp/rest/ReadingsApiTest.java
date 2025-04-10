@@ -40,9 +40,7 @@ public class ReadingsApiTest {
     	 dbConnection = new DBConnection();
     	    properties = new Properties();
     	    try {
-    	        properties.load(getClass().getClassLoader().getResourceAsStream("credentials.properties"));
-    	        System.out.println(properties);
-    	        dbConnection.openConnection(properties);
+    	        dbConnection.openConnection(getTestProperties());
     	    } catch (SQLException | IOException e) {
     	        e.printStackTrace();
     	    }
@@ -58,6 +56,16 @@ public class ReadingsApiTest {
         }
         System.out.println("Reading abgeschlossen");
     }
+    
+    private Properties getTestProperties() throws IOException {
+        // Setze den "user.name" direkt auf "testuser", BEVOR du auf die Properties zugreifst
+        System.setProperty("user.name", "testuser");
+
+        Properties properties = new Properties();
+        var inputStream = getClass().getClassLoader().getResourceAsStream("credentials.properties");
+        properties.load(inputStream);
+        return properties;
+    }	
     
     @AfterAll
     public static void stop() {
@@ -167,18 +175,55 @@ public class ReadingsApiTest {
                 .statusCode(200)
                 .body(equalTo("Reading deleted successfully"));
     }
+    
+    @Test
+    @DisplayName("testGetReadingsWithQueryParams")
+    public void testGetReadingsWithQueryParams() {
+        // Zuerst einen Customer erstellen
+        Customer customer = new Customer("Alice", "Smith", Gender.W, LocalDate.of(1992, 3, 10));
 
-   /* @Test
-    public void testGetReadings() {
+        Customer createdCustomer = given()
+                .contentType(ContentType.JSON)
+                .body(customer)
+                .when()
+                .post("/customers")
+                .then()
+                .statusCode(201)
+                .extract()
+                .as(Customer.class);
+
+        // Dann einen passenden Reading-Eintrag für diesen Customer
+        Reading reading = new Reading(
+                UUID.randomUUID(),
+                KindOfMeter.WASSER,
+                LocalDate.of(2024, 4, 1),
+                "Frühjahrsablesung",
+                9876.54,
+                "METER-999",
+                false,
+                createdCustomer
+        );
+
         given()
-                .queryParam("customer", UUID.randomUUID().toString())
+                .contentType(ContentType.JSON)
+                .body(reading)
+                .when()
+                .post("/readings")
+                .then()
+                .statusCode(201);
+
+        // Nun: getReadings mit passenden Query-Parametern aufrufen
+        given()
+                .queryParam("customer", createdCustomer.getId().toString())
                 .queryParam("start", "2024-01-01")
                 .queryParam("end", "2024-12-31")
-                .queryParam("kindOfMeter", "WATER")
+                .queryParam("kindOfMeter", "WASSER")
                 .when()
                 .get("/readings")
                 .then()
                 .statusCode(200)
-                .body(anyOf(equalTo("[]"), not(empty())));
-    } */
+                .contentType(ContentType.JSON)
+                .body("size()", equalTo(1)); // oder spezifischer prüfen, z. B. Wert oder Kommentar
+    }
+
 }

@@ -31,15 +31,14 @@ public class AuthApiTest {
 	@BeforeEach
 	public void setup() throws IOException {
 		dbConnection = new DBConnection();
-		properties = new Properties();
 		try {
-			properties.load(getClass().getClassLoader().getResourceAsStream("credentials.properties"));
-			System.out.println(properties);
-			dbConnection.openConnection(properties);
+			dbConnection.openConnection(getTestProperties());
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	@AfterAll
 	public static void tearDown() throws SQLException {
@@ -51,6 +50,16 @@ public class AuthApiTest {
 		}
 		System.out.println("Reading abgeschlossen");
 	}
+	
+	private Properties getTestProperties() throws IOException {
+        // Setze den "user.name" direkt auf "testuser", BEVOR du auf die Properties zugreifst
+        System.setProperty("user.name", "testuser");
+
+        Properties properties = new Properties();
+        var inputStream = getClass().getClassLoader().getResourceAsStream("credentials.properties");
+        properties.load(inputStream);
+        return properties;
+    }		
 
 	@AfterAll
 	public static void stop() {
@@ -76,5 +85,19 @@ public class AuthApiTest {
 		.then()
 		.statusCode(200)
 		.body(equalTo("Login successful"));
+	}
+	
+	@Test
+	public void failedLoginTest() {
+		UserCredentials wrongCredentials = new UserCredentials("admin", "wrongpassword");
+
+		given()
+			.contentType(ContentType.JSON)
+			.body(wrongCredentials)
+		.when()
+			.post("/auth/login")
+		.then()
+			.statusCode(401)
+			.body(equalTo("Invalid username or password"));
 	}
 }

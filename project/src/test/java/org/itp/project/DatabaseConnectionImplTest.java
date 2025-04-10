@@ -30,29 +30,11 @@ public class DatabaseConnectionImplTest {
     private Properties getTestProperties() throws IOException {
         // Setze den "user.name" direkt auf "testuser", BEVOR du auf die Properties zugreifst
         System.setProperty("user.name", "testuser");
-
         Properties properties = new Properties();
         var inputStream = getClass().getClassLoader().getResourceAsStream("credentials.properties");
-
-        if (inputStream == null) {
-            throw new IOException("credentials.properties not found in classpath!");
-        }
-
         properties.load(inputStream);
-
-        // Verwende jetzt den vorher gesetzten user.name = "testuser"
-        String systemUser = System.getProperty("user.name");
-
-        String url = properties.getProperty(systemUser + ".db.url");
-        String user = properties.getProperty(systemUser + ".db.user");
-        String password = properties.getProperty(systemUser + ".db.pw");
-
-        if (url == null || user == null || password == null) {
-            throw new IOException("Missing required DB properties for user: " + systemUser);
-        }
-
         return properties;
-    }
+    }			
 
 
     @Test
